@@ -1,0 +1,16 @@
+html {
+  font-size: 12px;
+  box-sizing: border-box;
+}
+.loading {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #bebaba;
+}
+
+.form-error {
+  color: red;
+  font-size: 0.8rem;
+}
