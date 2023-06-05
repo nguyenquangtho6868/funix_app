@@ -1,6 +1,7 @@
 const loginController = require('../controllers/AuthController');
 const userController = require('../controllers/UserController');
 const AuthMiddleware = require('../middleware/authMiddleware');
+const CourseController = require('../controllers/CourseController')
 
 function route(app) {
 
@@ -11,6 +12,12 @@ function route(app) {
     app.delete('/delete-user',AuthMiddleware.authLoginNoRole,userController.deleteUser);
     app.delete('/edit-user',AuthMiddleware.authLoginNoRole,userController.editUser);
     app.delete('/get-user-detail',AuthMiddleware.authLoginNoRole,userController.getUserDetail);
+    
+    // Courses
+    app.get('/get-list-course',AuthMiddleware.authLoginNoRole,CourseController.getListCourse);
+    app.post('/add-course',AuthMiddleware.authLoginNoRole,CourseController.addCourse);
+    app.delete('/delete-course',AuthMiddleware.authLoginNoRole,CourseController.deleteCourse);
+    // app.delete('/edit-course',AuthMiddleware.authLoginNoRole,CourseController.editUser);
 
     // Chat room
 }
