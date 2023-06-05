@@ -1,13 +1,13 @@
 import { Box } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import AddUserDialog from '../Modals/AddUserDialog';
-import { getUsers, addUser, deleteUser } from '../Services/LoginService';
-import '../css/users.css'
+import AddCourseDialog from '../Modals/AddCourseDialog';
+import { getCourses, deleteCourse } from '../Services/CourseService';
+import '../css/courses.css'
 
-function UsersComponent() {
+function CoursesComponent() {
   
-  const [listUser, setListUser] = useState([]);
+  const [listCourse, setListCourse] = useState([]);
   const [isDialog, setIsDialog] = useState(false);
 
   const handleOpenDialog = () => {
@@ -18,41 +18,35 @@ function UsersComponent() {
     setIsDialog(false);
   }
 
-  const handleDeleteUser = (data) => {
-    deleteUser((res) => {
+  const handleDeleteCourse = (data) => {
+    deleteCourse((res) => {
       if(res.statusCode === 200) {
-        getUsers((res) => {setListUser(res.data);})
+        getCourses((res) => {setListCourse(res.data);})
       }  
     }, data.id)
   }
 
-  const handleGetUser = () => {
-    getUsers((res) => {
-      setListUser(res.data);
+  const handleGetCourse = () => {
+    getCourses((res) => {
+        setListCourse(res.data);
     })
   }
 
   useEffect(() => {
-    handleGetUser();
+    handleGetCourse();
   }, [])
 
   const columns = [
     {
-      field: 'username',
-      headerName: 'User Name',
+      field: 'name',
+      headerName: 'Course Name',
       width: 350,
       editable: true,
     },
     {
-      field: 'role',
-      headerName: 'Role',
+      field: 'code',
+      headerName: 'Code',
       width: 100,
-      editable: true,
-    },
-    {
-      field: 'courses',
-      headerName: 'Courses',
-      width: 200,
       editable: true,
     },
     {
@@ -65,26 +59,24 @@ function UsersComponent() {
           <button className='btn btn-primary mr-2' >
             Edit
           </button>
-          <button className='btn btn-danger' onClick={() => handleDeleteUser(params)} >
+          <button className='btn btn-danger' onClick={() => handleDeleteCourse(params)} >
             Delete
           </button>
         </div>
       )
     },
   ];
-
-  
   
   return (
     <div className="user">
       <div className="user-header">
-        <h5>User List</h5>
-        <button className="btn btn-success" onClick={handleOpenDialog}>Add User</button>
+        <h5>Course List</h5>
+        <button className="btn btn-success" onClick={handleOpenDialog}>Add Course</button>
       </div>
       <div>
         <Box sx={{ height: 400, width: '100%' }}>
           <DataGrid
-            rows={listUser}
+            rows={listCourse}
             columns={columns}
             pageSize={5}
             getRowId={(row) => row._id}
@@ -95,14 +87,14 @@ function UsersComponent() {
         </Box>
       </div>
       {
-        isDialog && <AddUserDialog 
-        open={isDialog}
+        isDialog && <AddCourseDialog 
+        open={isDialog} 
         handleClose={handleCloseDialog}
-        getUsers={handleGetUser}
+        getUsers={handleGetCourse}
       />
       }
     </div>
   );
 }
 
-export default UsersComponent;
+export default CoursesComponent;

@@ -14,3 +14,106 @@ html {
   color: red;
   font-size: 0.8rem;
 }
+
+
+
+
+/* Responsive */
+.main-title-icon {
+  display: none;
+}
+
+.header-name-item-sm-md {
+  display: none;
+}
+
+.ipad, .header-right-mobile {
+  display: none;
+}
+
+.sidebar-ipad-close {
+  transform: translateX(-120%);
+}
+
+.sidebar-ipad-open {
+  transform: translateX(0);
+}
+
+@media (max-width: 1024px) {
+  .main-item {
+    width: 80%;
+  }
+  
+}
+
+@media (max-width: 912px) {
+  .login-box {
+    width: 50%;
+  }
+  .home-right {
+    padding: 0 7px;
+  }
+
+  .ipad {
+    display: block;
+  }
+  
+  .pc {
+    display: none;
+  }
+
+  .header-name-item {
+      display: none;
+  }
+
+  .header-name-item-sm-md {
+    display: block;
+  }
+
+  .main-title-icon {
+    display: block;
+  }
+
+  .sidebar-item {
+    position: fixed;
+    width: 25%;
+    height: 95%;
+    background-color: #fff;
+    top: 0;
+    transition: 0.3s linear;
+    z-index: 1;
+  }
+
+  .main-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .main-title-icon-item {
+    font-size: 1.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar-item  {
+    width: 40%;
+  }
+
+  .header-right-ipad-pc {
+    display: none;
+  }
+  .header-right-mobile {
+    display: block;
+  }
+}
+
+@media (max-width: 540px) {
+  .login-box {
+    width: 80%;
+  }
+  
+  .header-logo {
+    font-size: 2.2rem;
+  }
+}

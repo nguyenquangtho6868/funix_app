@@ -7,12 +7,13 @@ function AuthLoginProvider({children}) {
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [isNav, setIsNav] = useState(false);
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
     const username = localStorage.getItem('username');
 
   return (
-    <AuthContext.Provider value={{token,role,setIsLoading,username}}>
+    <AuthContext.Provider value={{token,role,setIsLoading,username,isNav,setIsNav}}>
         {isLoading? <div className="loading">
             <ColorRing
               visible={true}

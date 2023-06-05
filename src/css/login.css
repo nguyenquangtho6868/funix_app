@@ -8,7 +8,7 @@ html {
   }
   
   .login {
-    height: 828.75px;
+    height: 100vh;
     background: linear-gradient(#141e30,#243b55);
   }
   
@@ -17,7 +17,7 @@ html {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 400px;
+    width: 35%;
     padding: 40px;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 10px;
@@ -26,6 +26,7 @@ html {
 
   .login-box h1 {
     color: cyan;
+    text-align: center;
   }
   
   .navbar {

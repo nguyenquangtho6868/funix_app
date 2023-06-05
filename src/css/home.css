@@ -2,6 +2,10 @@
     margin: 0;
 }
 
+.main-title-text {
+    margin: 0 !important;
+}
+
 .home-top {
     margin-top: 10vh;
 }

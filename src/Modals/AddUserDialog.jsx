@@ -1,4 +1,3 @@
-import * as React from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -15,10 +14,14 @@ import { toast } from 'react-toastify';
 import { useTheme } from '@mui/material/styles';
 import Chip from '@mui/material/Chip';
 import { addUser } from '../Services/LoginService';
+import { getCourses } from '../Services/CourseService';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useState, useEffect } from 'react';
 
 export default function AddUserDialog(props) {
+
+  const [listCourse,setListCourse] = useState([])
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -93,6 +96,15 @@ export default function AddUserDialog(props) {
       }, data)
     },
 })
+
+  useEffect(() => {
+    getCourses((rs) => {
+      console.log(rs);
+      if(rs.statusCode === 200 && rs.data.length > 0) {
+        setListCourse(rs.data.map(obj => obj.code));
+      } 
+    })
+  }, []);
 
   return (
     <div>
@@ -172,7 +184,7 @@ export default function AddUserDialog(props) {
               )}
               MenuProps={MenuProps}
             >
-              {names.map((name) => (
+              {listCourse.length > 0 && listCourse.map((name) => (
                 <MenuItem
                   key={name}
                   value={name}
