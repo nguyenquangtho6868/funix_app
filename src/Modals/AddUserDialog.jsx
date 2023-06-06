@@ -93,8 +93,9 @@ export default function AddUserDialog(props) {
           } else {
             if(res.message) {
               toast.error(res.message,{className:'toast-message'});
-            }
+            } else {
               toast.error("Có lỗi trong quá trình xử lý!",{className:'toast-message'});
+            }
           }
       }, data)
     },
