@@ -8,18 +8,15 @@ import HistoryIcon from '@mui/icons-material/History';
 import HomeIcon from '@mui/icons-material/Home';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Tooltip from '@mui/material/Tooltip';
 import './layout.css'
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
 
-const Item = styled(Paper)(({ theme }) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-  }));
 
-function LayoutComponent({children}) {
-  
+function LayoutComponent({ children }) {
+
     const navigate = useNavigate();
 
     const moveToHome = () => {
@@ -31,41 +28,76 @@ function LayoutComponent({children}) {
     }
 
     const handleLogout = () => {
-        localStorage.clear();   
+        localStorage.clear();
         navigate('/');
     }
 
-  return (
-    <div className='layout'>
-        <Grid container spacing={1}>
-            <Grid item xs={2} rowSpacing={3} className='layout-content'>
-                <div className='layout-nav'>
-                    <List className='layout-nav-list'>
-                        <ListItem button onClick={moveToHome}  className='layout-nav-list-item'> 
-                            <ListItemIcon className='text-center-flex'> <HomeIcon fontSize="large" color="secondary" /></ListItemIcon>
-                        </ListItem>
+    return (
+        <div className='layout'>
+            <Grid container spacing={1} className='layout-container'>
+                <Grid item md={2} lg={2} rowSpacing={3} className='layout-content ipad-pc'>
+                    <div className='layout-nav'>
+                        <List className='layout-nav-list'>
+                            <Tooltip title="Trang chủ" placement='right-end'>
+                                <ListItem button onClick={moveToHome} className='layout-nav-list-item'>
+                                    <ListItemIcon className='text-center-flex'> <HomeIcon fontSize="large" color="secondary" /></ListItemIcon>
+                                </ListItem>
+                            </Tooltip>
 
-                        <ListItem button onClick={moveToHistory} className='layout-nav-list-item'>
-                            <ListItemIcon className='text-center-flex'> <HistoryIcon fontSize="large" color="secondary" /></ListItemIcon>
-                        </ListItem>
-                    </List>
-                    <List className='layout-nav-list'>
-                        <ListItem button className='layout-nav-list-item'>
-                            <ListItemIcon className='text-center-flex'> <AccountCircleIcon fontSize="large" color="secondary" /></ListItemIcon>
-                        </ListItem>
+                            <Tooltip title="Lịch sử" placement='right-end'>
+                                <ListItem button onClick={moveToHistory} className='layout-nav-list-item'>
+                                    <ListItemIcon className='text-center-flex'> <HistoryIcon fontSize="large" color="secondary" /></ListItemIcon>
+                                </ListItem>
+                            </Tooltip>
 
-                        <ListItem button className='layout-nav-list-item'>
-                            <ListItemIcon className='text-center-flex' onClick={handleLogout}> <ExitToAppIcon fontSize="large" color="secondary" /></ListItemIcon>
-                        </ListItem>
-                    </List>
-                </div>
+                        </List>
+                        <List className='layout-nav-list'>
+                            <Tooltip title="Profile" placement='right-end'>
+                                <ListItem button className='layout-nav-list-item'>
+                                    <ListItemIcon className='text-center-flex'> <AccountCircleIcon fontSize="large" color="secondary" /></ListItemIcon>
+                                </ListItem>
+                            </Tooltip>
+
+                            <Tooltip title="Đăng xuất" placement='right-end'>
+                                <ListItem button className='layout-nav-list-item'>
+                                    <ListItemIcon className='text-center-flex' onClick={handleLogout}> <ExitToAppIcon fontSize="large" color="secondary" /></ListItemIcon>
+                                </ListItem>
+                            </Tooltip>
+                        </List>
+                    </div>
+                </Grid>
+                <Grid item xs={12} md={10} lg={10} className='layout-right'>
+                    <Outlet />
+                </Grid>
             </Grid>
-            <Grid item xs={10}>
-                <Outlet/>
+            <Grid className='mobile'>
+                <SpeedDial
+                    ariaLabel="SpeedDial basic example"
+                    sx={{ position: 'absolute', bottom: 16, left: 16 }}
+                    icon={<SpeedDialIcon />}
+                >
+                    <SpeedDialAction
+                        icon={<ExitToAppIcon fontSize="large" color="secondary" />}
+                        tooltipTitle={'Trang chủ'}
+                    />
+                    <SpeedDialAction
+                        icon={<AccountCircleIcon fontSize="large" color="secondary" />}
+                        tooltipTitle={'Trang chủ'}
+                    />
+                    <SpeedDialAction
+                        icon={<HistoryIcon fontSize="large" color="secondary" />}
+                        tooltipTitle={'Trang chủ'}
+                        onClick={moveToHistory}
+                    />
+                    <SpeedDialAction
+                        icon={<HomeIcon fontSize="large" color="secondary" />}
+                        tooltipTitle={'Trang chủ'}
+                        onClick={moveToHome}
+                    />
+                </SpeedDial>
             </Grid>
-        </Grid>
-    </div>
-  )
+        </div>
+    )
 };
 
 export default LayoutComponent;

@@ -30,39 +30,40 @@
     border-radius: 10rem;
 }
 
-.layout-children-grid {
+.layout-children {
+    width: 100%;
+    margin-right: 3rem;
+}
+
+.layout-right {
+    display: flex;
     justify-content: center;
-
+    align-items: center;
 }
 
-.layout-children-left,.layout-children-right {
-    height: 100vh;
-}
-
-.layout-children-left{
-    padding: 2rem 2rem 2rem 0.5rem;
-}
-
-.layout-children-right {
-    padding: 2rem 0.5rem 2rem 2rem;
-}
-
-.layout-children-left-content, .layout-children-right-content {
+.layout-children-content {
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     width: 100%;
-    height: 100%;
+    height: 85vh;
     border-radius: 5rem;
+    padding: 0 4rem;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.layout-children-middle {
-    text-align: center;
-}
-
 .layout-children-list-mentor {
     overflow-y: scroll;
     height: 60vh;
+}
+
+.layout-children-content-item {
+    width: 80%;
+}
+
+.layout-children-content-item-textarea {
+    max-height: 8rem;
+    min-height: 8rem;
+    overflow-y: scroll !important;
 }
