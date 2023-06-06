@@ -4,15 +4,19 @@ const EmailModel = require('../models/email');
 
 class UserController {
     async addUser (req, res) {
-        const {username,email,role,courses} = req.body;
-        const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        const string_length = 8;
-        let randomstring = '';
-        for (var i=0; i<string_length; i++) {
-            let rnum = Math.floor(Math.random() * chars.length);
-            randomstring += chars.substring(rnum,rnum+1);
-        }
         try {
+            const {username,email,role,courses} = req.body;
+            const user = await User.findOne({email});
+            if(user) {
+                return res.status(422).json({message: 'Your email must be a unique!', statusCode: 500})
+            }
+            const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            const string_length = 8;
+            let randomstring = '';
+            for (var i=0; i<string_length; i++) {
+                let rnum = Math.floor(Math.random() * chars.length);
+                randomstring += chars.substring(rnum,rnum+1);
+            }
             const newUser = await User.create({
                 username: username,
                 password: randomstring,
