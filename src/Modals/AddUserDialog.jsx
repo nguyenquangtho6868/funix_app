@@ -91,6 +91,9 @@ export default function AddUserDialog(props) {
               resetForm();
               props.getUsers();
           } else {
+            if(res.message) {
+              toast.error(res.message,{className:'toast-message'});
+            }
               toast.error("Có lỗi trong quá trình xử lý!",{className:'toast-message'});
           }
       }, data)
