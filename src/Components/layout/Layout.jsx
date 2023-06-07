@@ -79,6 +79,7 @@ function LayoutComponent({ children }) {
                     <SpeedDialAction
                         icon={<ExitToAppIcon fontSize="large" color="secondary" />}
                         tooltipTitle={'Trang chủ'}
+                        onClick={handleLogout}
                     />
                     <SpeedDialAction
                         icon={<AccountCircleIcon fontSize="large" color="secondary" />}
