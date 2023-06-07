@@ -41,21 +41,37 @@
     align-items: center;
 }
 
-.layout-children-content {
+.layout-children-content, .layout-mentor {
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     width: 100%;
     height: 85vh;
     border-radius: 5rem;
-    padding: 0 4rem;
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+.layout-children-content {
+    padding: 0 4rem;
+}
+
+.layout-mentor  {
+    padding: 0 2rem;
+}
+
+.layout-mentor-btn-back {
+    width: 5rem;
+}
+
+.layout-mentor-right,.layout-mentor-left {
+    height: 75vh;
+}
+
 .layout-children-list-mentor {
     overflow-y: scroll;
-    height: 60vh;
+    height: 80%;
+    margin-top: 1rem;
 }
 
 .layout-children-content-item {
@@ -66,4 +82,44 @@
     max-height: 8rem;
     min-height: 8rem;
     overflow-y: scroll !important;
+}
+
+.list-group-chat {
+    height: 65vh;
+    overflow-y: scroll;
+}
+
+.layout-mentor-child-right {
+    height: 80%;
+}
+
+.layout-mentor-child-header {
+    height: 7.5vh;
+}
+
+.list-notification {
+    height: 88vh;
+}
+
+.student-question {
+    background: #44474a;
+    color: #efe8d1;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 50%;
+}
+
+.btn-support-student {
+    background-color: #d47fe9 !important;
+    border-radius: 8px;
+    color: black !important;
+}
+
+.text-question {
+    text-overflow: ellipsis;
+}
+
+.group-chat-item-right {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(149, 157, 165, 0.2);
 }
