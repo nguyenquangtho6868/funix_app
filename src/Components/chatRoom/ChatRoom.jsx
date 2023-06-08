@@ -242,7 +242,7 @@ function ChatRoomComponent() {
                     </List>
                 </Grid>
                 <Grid container className='message-input'>
-                    <Grid item className='message-input-tag' xs={8} sm={9} md={10} pr={1}>
+                    <Grid item className='message-input-tag' xs={7} sm={9} md={10} pr={1}>
                         <input
                             value={valueMessage}
                             onChange={(e) => setValueMessage(e.target.value)}
@@ -252,11 +252,11 @@ function ChatRoomComponent() {
                         </input>
                     </Grid>
 
-                    <Grid item xs={4} sm={3} md={2} className='message-input-send'>
+                    <Grid item xs={5} sm={3} md={2} className='message-input-send'>
                         <TelegramIcon className='message-input-send-icon' />
                         <ImageIcon className='message-input-send-icon' />
                         <Button className='ipad-pc' variant="contained" color="error" onClick={endConversation}>
-                            Kết Thúc
+                            END
                         </Button>
                     </Grid>
                 </Grid>
