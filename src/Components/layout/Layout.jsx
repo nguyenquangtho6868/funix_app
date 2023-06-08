@@ -73,7 +73,7 @@ function LayoutComponent({ children }) {
             <Grid className='mobile'>
                 <SpeedDial
                     ariaLabel="SpeedDial basic example"
-                    sx={{ position: 'absolute', bottom: 16, left: 16 }}
+                    sx={{ position: 'absolute', bottom: 4, left: 16 }}
                     icon={<SpeedDialIcon />}
                 >
                     <SpeedDialAction
