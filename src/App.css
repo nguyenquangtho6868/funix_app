@@ -48,6 +48,12 @@ body {
   }
 }
 
+@media (min-width: 1024px) {
+  .group-chat-mobile-text {
+    padding-left: 0.4rem;
+  }
+}
+
 @media (width: 912px) {
   .layout-mentor-child-header {
     height: 4vh;

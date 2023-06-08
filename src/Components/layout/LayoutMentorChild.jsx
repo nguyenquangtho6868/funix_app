@@ -3,22 +3,13 @@ import Grid from '@mui/material/Grid';
 import './layout.css'
 import { useTheme } from '@mui/material/styles';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import FormControl from '@mui/material/FormControl';
-import CssBaseline from '@mui/material/CssBaseline';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Select from '@mui/material/Select';
-import { List, ListItem, ListItemIcon } from '@mui/material';
+import { List, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Form, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 const ITEM_HEIGHT = 48;
@@ -76,7 +67,7 @@ function LayoutMentorChildComponent() {
     }
 
     const moveToChatRoom = () => {
-        
+        navigate('/chat-room')
     }
 
     useEffect(() => {
@@ -86,7 +77,7 @@ function LayoutMentorChildComponent() {
         <Grid className='layout-children'>
             <Grid className='layout-mentor-child'>
                 <Grid className='layout-mentor-child-header text-center-align' pl={2} >
-                    <Grid className='layout-nav-list-item'>
+                    <Grid className='layout-nav-list-item mobile'>
                         <IconButton className='layout-mentor-btn-back' onClick={backView}>
                             <ArrowBackIosIcon ></ArrowBackIosIcon>
                         </IconButton>
@@ -144,7 +135,7 @@ function LayoutMentorChildComponent() {
                                                 </Typography>
                                             </Grid>
                                             <Grid className='text-center'>
-                                                <Button className='btn-support-student' color='secondary'>
+                                                <Button onClick={moveToChatRoom} className='btn-support-student' color='secondary'>
                                                     Hỗ Trợ Ngay
                                                 </Button>
                                             </Grid>
