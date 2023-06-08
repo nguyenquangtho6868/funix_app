@@ -48,9 +48,19 @@ body {
   }
 }
 
+@media (width: 1024px) {
+  .history-btn {
+    justify-content: end;
+  }
+}
+
 @media (min-width: 1024px) {
   .group-chat-mobile-text {
     padding-left: 0.4rem;
+  }
+
+  .history-filter {
+    margin-top: 2rem;
   }
 }
 
@@ -85,6 +95,10 @@ body {
 
   .student-question {
     width: 70%;
+  }
+
+  .history-email {
+    margin-top: 1rem !important;
   }
 }
 

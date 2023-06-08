@@ -1,96 +1,94 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
-import { getCourses } from '../../Services/CourseService';
-import '../layout/layout.css'
+import './history.css'
 import { useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import { List, ListItem, ListItemIcon } from '@mui/material';
-import Avatar from '@mui/material/Avatar';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { Form, Outlet, useNavigate } from 'react-router-dom';
+import { Button, List, ListItem } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import TextField from '@mui/material/TextField';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import dayjs from 'dayjs';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TablePagination from '@mui/material/TablePagination';
+import TableRow from '@mui/material/TableRow';
 
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
+const columns = [
+    { id: 'email', label: 'Email', minWidth: 170 },
+    { id: 'code', label: 'Code Course', minWidth: 100 },
+    {
+        id: 'start',
+        label: 'Start Date',
+        minWidth: 170,
+        align: 'right',
     },
-};
+    {
+        id: 'end',
+        label: 'End Date',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toLocaleString('en-US'),
+    },
+    {
+        id: 'density',
+        label: 'Density',
+        minWidth: 170,
+        align: 'right',
+        format: (value) => value.toFixed(2),
+    },
+];
 
-
-function getStyles(name, personName, theme) {
-    return {
-        fontWeight:
-            personName.indexOf(name) === -1
-                ? theme.typography.fontWeightRegular
-                : theme.typography.fontWeightMedium,
-    };
+function createData(email, code, start, end ) {
+    return { email, code, start,end};
 }
+
+const rows = [
+    createData('India', 'IN', '03/05/2022', '04/06/2023'),
+    createData('China', 'CN', '03/05/2022', '04/06/2023'),
+    createData('Italy', 'IT', '03/05/2022', '04/06/2023'),
+    createData('United States', 'US', '03/05/2022', '04/06/2023'),
+    createData('Canada', 'CA', '03/05/2022', '04/06/2023'),
+    createData('Australia', 'AU', '03/05/2022', '04/06/2023'),
+    createData('Germany', 'DE', '03/05/2022', '04/06/2023'),
+    createData('Ireland', 'IE', '03/05/2022', '04/06/2023'),
+    createData('Mexico', 'MX', '03/05/2022', '04/06/2023'),
+    createData('Japan', 'JP', '03/05/2022', '04/06/2023'),
+    createData('France', 'FR', '03/05/2022', '04/06/2023'),
+    createData('United Kingdom', 'GB', '03/05/2022', '04/06/2023'),
+    createData('Russia', 'RU', '03/05/2022', '04/06/2023'),
+    createData('Nigeria', 'NG', '03/05/2022', '04/06/2023'),
+    createData('Brazil', 'BR', '03/05/2022', '04/06/2023'),
+];
 
 function HistoryComponent() {
     const theme = useTheme();
     const navigate = useNavigate();
-    const [listCourses, setListCourse] = useState([]);
-    const [courses, setCourses] = useState([]);
-    const [listGroupConversation, setListGroupConversation] = useState([
+    const [value, setValue] = useState(dayjs('2022-04-17'));
+    const [listHistory, setListHistory] = useState([
         {
-            name: 'NODEJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
+            code: 'NODEJS',
+            start_date: '',
+            end_date: '',
+            email_mentor: ''
         },
-        {
-            name: 'HTML,CSS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'REACTJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'JAVA',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'VUEJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'SQL SEVER',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'JAVASCRIPT',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: '.NET',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'PYTHON',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        }
     ]);
+
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
+
+    const handleChangePage = (newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        console.log(event);
+        setRowsPerPage(+event.target.value);
+        setPage(0);
+    };
 
     const moveToChatRoom = (event) => {
         navigate('/chat-room')
@@ -105,129 +103,92 @@ function HistoryComponent() {
     };
 
     useEffect(() => {
-        getCourses((rs) => {
-            if (rs.statusCode === 200 && rs.data.length > 0) {
-                setListCourse(rs.data.map(obj => obj.code));
-            }
-        })
+
     }, [])
     return (
-        <Grid className='layout-children'>
-            <Grid container className='layout-mentor'>
-                <Grid item xs={12} sm={12} md={4} lg={4} className='layout-mentor-left'>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-multiple-chip-label">Courese</InputLabel>
-                        <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            multiple
-                            name="courses"
-                            value={courses}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip key={value} label={value} />
+        <Grid container className='history'>
+            <Grid xs={12} item mb={2}>
+                <Grid container className='history-filter'>
+                    <Grid item xs={12} sm={6} md={3} lg={3} className='text-center-flex history-filter-item'>
+                        <TextField
+                            id="outlined-basic"
+                            label="Email Mentor"
+                            variant="outlined"
+                            className='history-filter-item-text history-email'
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={2} lg={2} className='text-center-flex history-filter'>
+                        <TextField
+                            id="outlined-basic"
+                            label="Code"
+                            variant="outlined"
+                            className='history-filter-item-text'
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3} lg={2}  className='text-center-flex history-filter-date history-filter'>
+                        <DatePicker className='history-filter-item-text' label="Start Date" />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={3} lg={2}  className='text-center-flex history-filter'>
+                        <DatePicker className='history-filter-item-text' label="End Date" />
+                    </Grid>
+
+                    <Grid item xs={12} sm={12} md={12} lg={2}  className='history-btn text-center-flex history-filter'>
+                        <Button className='history-btn-filter'>
+                            Filter
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={12}>
+                <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+                    <TableContainer sx={{ maxHeight: 440 }}>
+                        <Table stickyHeader aria-label="sticky table">
+                            <TableHead>
+                                <TableRow>
+                                    {columns.map((column) => (
+                                        <TableCell
+                                            key={column.id}
+                                            align={column.align}
+                                            style={{ minWidth: column.minWidth, fontWeight: 600, }}
+                                        >
+                                            {column.label}
+                                        </TableCell>
                                     ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                        >
-                            {listCourses.length > 0 && listCourses.map((name) => (
-                                <MenuItem
-                                    key={name}
-                                    value={name}
-                                    style={getStyles(name, courses, theme)}
-                                >
-                                    {name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-
-                    <Grid className='list-group-chat ipad-pc' mt={1}>
-                        <List>
-                            {listGroupConversation.length > 0 && listGroupConversation.map((obj, key) => {
-                                return (
-                                    <ListItem button key={key} onClick={moveToGroupChat}>
-                                        <Grid container rowSpacing={4}>
-                                            <Grid item xs={3}>
-                                                <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
-                                            </Grid>
-                                            <Grid item xs={9}  className='group-chat-item-right'>
-                                                <FormControl fullWidth>
-                                                    <Typography
-                                                        align='center'
-                                                        variant="h5"
-                                                        gutterBottom
-                                                        noWrap={true}
-                                                        className='layout-children-content-item-title'
-                                                    >
-                                                        {obj.name}
-                                                    </Typography>
-                                                </FormControl>
-                                                <FormControl fullWidth>
-                                                    <Typography
-                                                        align='center'
-                                                        variant="p"
-                                                        noWrap={true}
-                                                        gutterBottom
-                                                        className='layout-children-content-item-title'
-                                                    >
-                                                        <Typography variant='p'>{obj.name_guy}</Typography> : {obj.guyOfPresent}
-                                                    </Typography>
-                                                </FormControl>
-                                            </Grid>
-                                        </Grid>
-                                    </ListItem>
-                                )
-                            })}
-                        </List>
-                    </Grid>
-                    <Grid className='list-group-chat mobile' mt={1}>
-                        <List>
-                            {listGroupConversation.length > 0 && listGroupConversation.map((obj, key) => {
-                                return (
-                                    <ListItem button key={key} onClick={moveToGroupChatMobile}>
-                                        <Grid container rowSpacing={4}>
-                                            <Grid item xs={3} sm={2} className='text-center-justify'>
-                                                <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
-                                            </Grid>
-                                            <Grid item xs={9} sm={10} className='group-chat-item-right group-chat-item-right-mobile'>
-                                               <Grid>
-                                                <FormControl fullWidth>
-                                                        <Typography
-                                                            variant="h5"
-                                                            gutterBottom
-                                                            noWrap={true}
-                                                            className='layout-children-content-item-title  group-chat-content-title'
-                                                        >
-                                                            {obj.name}
-                                                        </Typography>
-                                                    </FormControl>
-                                                    <FormControl fullWidth>
-                                                        <Typography
-                                                            variant="p"
-                                                            noWrap={true}
-                                                            gutterBottom
-                                                            className='layout-children-content-item-title  group-chat-content-title'
-                                                        >
-                                                            <Typography variant='p'>{obj.name_guy}</Typography> : {obj.guyOfPresent}
-                                                        </Typography>
-                                                    </FormControl>
-                                               </Grid>
-                                            </Grid>
-                                        </Grid>
-                                    </ListItem>
-                                )
-                            })}
-                        </List>
-                    </Grid>
-                </Grid>
-
-                <Grid item xs={12} sm={12} md={8} lg={8} className='layout-mentor-right ipad-pc'>
-                    <Outlet/>
-                </Grid>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {rows
+                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                                    .map((row) => {
+                                        return (
+                                            <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                                                {columns.map((column) => {
+                                                    const value = row[column.id];
+                                                    return (
+                                                        <TableCell key={column.id} align={column.align}>
+                                                            {column.format && typeof value === 'number'
+                                                                ? column.format(value)
+                                                                : value}
+                                                        </TableCell>
+                                                    );
+                                                })}
+                                            </TableRow>
+                                        );
+                                    })}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <TablePagination
+                        rowsPerPageOptions={[10, 25, 100]}
+                        component="div"
+                        count={rows.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page || 0}
+                        onPageChange={(e,value)=>handleChangePage(value)}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+                </Paper>
             </Grid>
         </Grid>
     )
