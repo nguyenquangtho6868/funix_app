@@ -8,6 +8,7 @@ function AuthLoginProvider({children}) {
 
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [isOutlet, setIsOutlet] = useState(false);
 
     // useEffect(() => {
     //   const unsubcribe = auth.onAuthStateChanged((user) => {
@@ -32,7 +33,7 @@ function AuthLoginProvider({children}) {
     //   }
     // }, [navigate]);
   return (
-    <AuthContext.Provider value={{setIsLoading}}>
+    <AuthContext.Provider value={{setIsLoading, isOutlet, setIsOutlet}}>
         {isLoading? <div className="loading">
             <ColorRing
               visible={true}

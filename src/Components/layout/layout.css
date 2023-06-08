@@ -98,7 +98,7 @@
 }
 
 .list-notification {
-    height: 88vh;
+    height: 64vh;
 }
 
 .student-question {
@@ -122,4 +122,10 @@
 .group-chat-item-right {
     padding-bottom: 1rem;
     border-bottom: 1px solid rgba(149, 157, 165, 0.2);
+}
+
+.not-outlet {
+    width: 100%;
+    height: 100%;
+    color: #18191a;
 }

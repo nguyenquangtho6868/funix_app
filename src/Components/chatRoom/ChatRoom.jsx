@@ -254,7 +254,15 @@ function ChatRoomComponent() {
 
                     <Grid item xs={5} sm={3} md={2} className='message-input-send'>
                         <TelegramIcon className='message-input-send-icon' />
-                        <ImageIcon className='message-input-send-icon' />
+                        <Button
+                            component="label"
+                        >
+                            <input
+                                type="file"
+                                hidden
+                            />
+                            <ImageIcon className='message-input-send-icon' />
+                        </Button>
                         <Button className='ipad-pc' variant="contained" color="error" onClick={endConversation}>
                             END
                         </Button>

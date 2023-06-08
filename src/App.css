@@ -65,6 +65,10 @@ body {
     display: block;
   }
 
+  .list-notification {
+    height: 88vh;
+  }
+
   .ipad-pc {
     display: none;
   }

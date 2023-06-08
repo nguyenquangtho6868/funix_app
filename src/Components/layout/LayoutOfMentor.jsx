@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Grid from '@mui/material/Grid';
 import { getCourses } from '../../Services/CourseService';
 import './layout.css'
@@ -12,10 +12,9 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import { List, ListItem, ListItemIcon } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import TextareaAutosize from '@mui/base/TextareaAutosize';
+import { AuthContext } from '../../Context/AuthLogin';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import { Form, Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 
 const ITEM_HEIGHT = 48;
@@ -42,6 +41,7 @@ function getStyles(name, personName, theme) {
 function LayoutOfMentorComponent() {
     const theme = useTheme();
     const navigate = useNavigate();
+    const { setIsOutlet, isOutlet } = useContext(AuthContext);
     const [listCourses, setListCourse] = useState([]);
     const [courses, setCourses] = useState([]);
     const [listGroupConversation, setListGroupConversation] = useState([
@@ -97,6 +97,7 @@ function LayoutOfMentorComponent() {
     };
 
     const moveToGroupChat = (event) => {
+        setIsOutlet(true);
         navigate('/home/group-chat-mentor')
     };
 
@@ -154,7 +155,7 @@ function LayoutOfMentorComponent() {
                                             <Grid item xs={3}>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
                                             </Grid>
-                                            <Grid item xs={9}  className='group-chat-item-right'>
+                                            <Grid item xs={9} className='group-chat-item-right'>
                                                 <FormControl fullWidth>
                                                     <Typography
                                                         align='center'
@@ -194,8 +195,8 @@ function LayoutOfMentorComponent() {
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
                                             </Grid>
                                             <Grid item xs={9} sm={10} className='group-chat-item-right group-chat-item-right-mobile'>
-                                               <Grid>
-                                                <FormControl fullWidth>
+                                                <Grid>
+                                                    <FormControl fullWidth>
                                                         <Typography
                                                             variant="h5"
                                                             gutterBottom
@@ -215,7 +216,7 @@ function LayoutOfMentorComponent() {
                                                             <Typography variant='p'>{obj.name_guy}</Typography> : {obj.guyOfPresent}
                                                         </Typography>
                                                     </FormControl>
-                                               </Grid>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
                                     </ListItem>
@@ -226,7 +227,20 @@ function LayoutOfMentorComponent() {
                 </Grid>
 
                 <Grid item xs={12} sm={12} md={8} lg={8} className='layout-mentor-right ipad-pc'>
-                    <Outlet/>
+                    {
+                        isOutlet ? <Outlet /> : <Grid className='not-outlet text-center-flex'>
+                            <Typography
+                                variant="p"
+                                noWrap={true}
+                                color={''}
+                                fontWeight={600}
+                                gutterBottom
+                                className='layout-children-content-item-title  group-chat-content-title'
+                            >
+                                Hãy chọn một nhóm thông báo
+                            </Typography>
+                        </Grid>
+                    }
                 </Grid>
             </Grid>
         </Grid>
