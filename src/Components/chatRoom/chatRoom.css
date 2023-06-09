@@ -9,7 +9,7 @@
 }
 
 .chat-right-title {
-    height: 6vh;
+    height: 8vh;
     letter-spacing: 2px;
     color: blue;
     line-height: 4rem;
@@ -19,7 +19,7 @@
 }
 
 .chat-content {
-    height: 80vh;
+    height: 75vh;
     width: 100%;
 }
 
@@ -63,7 +63,7 @@
 
 .message-input {
     display: flex;
-    height: 6vh;
+    height: 8vh;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
