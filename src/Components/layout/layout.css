@@ -3,7 +3,6 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    max-height: -webkit-fill-available;
 }
 
 .layout-nav {
@@ -88,12 +87,6 @@
 .list-group-chat {
     height: 65vh;
     overflow-y: scroll;
-    max-height: -webkit-fill-available;
-}
-
-.layout-mentor-child {
-    height: 100vh;
-    max-height: -webkit-fill-available;
 }
 
 .layout-mentor-child-right {
