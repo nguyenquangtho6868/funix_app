@@ -103,6 +103,15 @@ body {
   .history-email {
     margin-top: 1rem !important;
   }
+
+  .group-chat-content-title {
+    font-size: 0.9rem !important;
+  }
+  
+  .group-chat-content-title-top {
+    padding-left: 0.4rem !important;
+  }
+  
 }
 
 @media (max-width: 280px) {

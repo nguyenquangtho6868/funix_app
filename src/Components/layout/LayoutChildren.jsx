@@ -59,7 +59,6 @@ function LayoutChildrenComponent() {
     };
 
     useEffect(() => {
-        console.log(role);
         getCourses((rs) => {
             if (rs.statusCode === 200 && rs.data.length > 0) {
                 setListCourse(rs.data.map(obj => obj.code));

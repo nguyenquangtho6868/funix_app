@@ -129,3 +129,13 @@
     height: 100%;
     color: #18191a;
 }
+
+.group-chat-content-icon-member {
+    color: #0b0be7ad;
+}
+
+.group-chat-mobile-text {
+    display: flex;
+    flex-direction: column !important;
+    justify-content: center;
+}

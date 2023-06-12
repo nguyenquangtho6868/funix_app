@@ -8,7 +8,7 @@
 
   .form-middle h1 {
     text-align: center;
-    color: #e54eaf;
+    /* color: #e54eaf; */
     font-size: 3rem;
     padding: 0;
   }
@@ -27,6 +27,7 @@
 
   .form-middle-group {
     position: relative;
+    margin-bottom: 1rem;
   }
 
   .form-middle-group .form-middle-label {
@@ -51,7 +52,7 @@
   }
 
   .MuiFormLabel-root {
-    color: deeppink !important;
+    color: black !important;
   }
 
   .input-login >div> input {
@@ -66,7 +67,7 @@
     color: #03e9f4;
     text-transform: uppercase;
     overflow: hidden;
-    margin-top: 40px;
+    margin-top: 1.8rem;
     transition: 0.25s;
     letter-spacing: 4px;
     border-radius: 5px;
@@ -172,7 +173,7 @@
 
   .login {
     height: 100vh;
-    background: linear-gradient(#141e30,#243b55);
+    background: linear-gradient(#e8ebef,#0555af);
   }
   
   .login-box {
@@ -182,7 +183,7 @@
     transform: translate(-50%, -50%);
     width: 50%;
     padding: 2.5rem;
-    background: rgba(0, 0, 0, 0.6);
+    /* background: rgba(0, 0, 0, 0.6); */
     border-radius: 10px;
     box-sizing: border-box;
     display: flex;
@@ -192,7 +193,6 @@
 
   .login-box-left {
     padding: 0.7rem;
-    background-color: aliceblue;
     border-radius: 0.7rem;
   }
 

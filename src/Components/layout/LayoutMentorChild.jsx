@@ -89,10 +89,10 @@ function LayoutMentorChildComponent() {
                         <Grid item xs={6} className='group-chat-mobile-text'>
                             <Grid>
                                 <Typography
-                                    variant="h5"
+                                    variant="p"
                                     gutterBottom
                                     noWrap={true}
-                                    className='layout-children-content-item-title group-chat-content-title'
+                                    className='layout-children-content-item-title group-chat-content-title  group-chat-content-title-top'
                                 >
                                     NODEJS
                                 </Typography>
@@ -100,12 +100,12 @@ function LayoutMentorChildComponent() {
                             <Grid >
                                 <Typography
                                     align='center'
-                                    variant="p"
+                                    variant="h6"
                                     noWrap={true}
                                     gutterBottom
                                     className='layout-children-content-item-title group-chat-content-title text-center-align'
                                 >
-                                    <PermIdentityIcon /> 4 Mentors
+                                    <PermIdentityIcon className='group-chat-content-icon-member' /> 4 Mentors
                                 </Typography>
                             </Grid>
                         </Grid>
