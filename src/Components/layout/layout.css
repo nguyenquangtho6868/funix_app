@@ -119,8 +119,8 @@
     text-overflow: ellipsis;
 }
 
-.group-chat-item-right {
-    padding-bottom: 1rem;
+.group-chat-item-right {    
+    align-self: center;
     border-bottom: 1px solid rgba(149, 157, 165, 0.2);
 }
 
