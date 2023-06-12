@@ -1,51 +1,61 @@
-import React, {useState,useEffect, useContext} from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { Form, FormGroup } from "react-bootstrap";
 import { toast } from 'react-toastify';
 import TextField from '@mui/material/TextField';
 import './login.css';
-import firebase,{ auth } from '../../Firebase/Config';
 import Grid from '@mui/material/Grid';
 import { loginPage } from "../../Services/LoginService";
 import { AuthContext } from "../../Context/AuthLogin";
 
 
-// const gmailProvider = new firebase.auth.GoogleAuthProvider();
-
 function LoginComponent() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { setIsLoading } = useContext(AuthContext);
 
-  const callbacklogin = (data) => {
-    if(data.statusCode === 200) {
-      toast.success('Đăng nhập thành công!');
-      setTimeout(() => {
-        navigate('/home');
-        setIsLoading(false);
-      }, 300);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userId', data.userId);
-      localStorage.setItem('username', data.username);
-      localStorage.setItem('role', data.role);
-    } else {
-      setTimeout(() => {
-        setIsLoading(false);
-        toast.error('Tên đăng nhập hoặc mật khẩu không đúng!');
-        navigate('/');
-      }, 300);
-    }
-  }
-  
-  function handleLogin() {
-    // firebase.auth().signInWithPopup(gmailProvider);
-    setIsLoading(true);
-    loginPage(callbacklogin, {
-      email: email,
-      password: password
-    })
-  };
+  const navigate = useNavigate();
+  const { setIsLoading } = useContext(AuthContext);
+  const formik = useFormik({
+    initialValues: {
+        email: '',
+        password: '',
+    },
+    validationSchema: Yup.object({
+        password: Yup.string().required('Bạn chưa nhập mật khẩu!'),
+        email: Yup
+        .string()
+        .matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,'Bạn chưa nhập đúng định dạng email!')
+        .required('Trường này là băt buộc!'),
+    }),
+    onSubmit: (values, {setSubmitting, resetForm}) => {
+      setIsLoading(true);
+      setSubmitting(true);
+      let data = {
+        password: values.password,
+        email: values.email
+      }
+      loginPage((res) => {
+        if(res.statusCode === 200) {
+          toast.success('Đăng nhập thành công!');
+          setTimeout(() => {
+            navigate('/home');
+            setIsLoading(false);
+          }, 300);
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('userId', res.userId);
+          localStorage.setItem('username', res.username);
+          localStorage.setItem('role', res.role);
+        } else {
+          setTimeout(() => {
+            setIsLoading(false);
+            toast.error('Tên đăng nhập hoặc mật khẩu không đúng!');
+            setSubmitting(false);
+            navigate('/');
+          }, 300);
+        }
+      }, data);
+    },
+})
    
     return (
       <div className="login">
@@ -62,9 +72,12 @@ function LoginComponent() {
                       id="filled-basic" 
                       label="Email" 
                       variant="filled" 
+                      name="email"
                       className='form-input-add input-login'
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={formik.handleChange}
+                      value={formik.values.email}
                   />
+                  {formik.errors.email && formik.touched.email && (<div className="form-error mt-2">{formik.errors.email}</div>)}
                 </FormGroup>
                 <FormGroup className="form-middle-group">
                   <TextField 
@@ -72,18 +85,25 @@ function LoginComponent() {
                       label="Password"
                       type="password"
                       variant="filled" 
+                      name="password"
                       className='form-input-add input-login'
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={formik.handleChange}
+                      value={formik.values.password}
                   />
+                  {formik.errors.password && formik.touched.password && (<div className="form-error mt-2">{formik.errors.password}</div>)}
                 </FormGroup>
                 <div className="login-submit">
-                  <div className="button-submit" onClick={handleLogin}>
+                  <button 
+                    className="button-submit" 
+                    disabled={formik.isSubmitting}
+                    onClick={formik.handleSubmit}
+                  >
                     <span></span>
                     <span></span>
                     <span></span>
                     <span></span>
                     submit
-                  </div>
+                  </button>
                 </div>
                 <div className="text-register">
                 </div>

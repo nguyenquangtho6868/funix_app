@@ -8,6 +8,13 @@ body {
   font-family: sans-serif;
   /* background-color: #dfdec0; */
 }
+
+.form-error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 0.2rem;
+}
+
 .loading {
   height: 100vh;
   display: flex;
