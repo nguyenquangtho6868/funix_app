@@ -27,6 +27,12 @@ body {
   align-items: center;
 }
 
+.text-around-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .text-center-justify {
   display: flex;
   justify-content: center;
@@ -100,6 +106,10 @@ body {
 @media (max-width: 540px) {
   .student-question {
     width: 70%;
+  }
+
+  .chat-right-title {
+    font-size: 1.4rem;  
   }
 
   .history-email {

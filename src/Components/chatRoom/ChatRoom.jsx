@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { List, ListItem, ListItemIcon } from '@mui/material';
+import { List, ListItem } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import Button from '@mui/material/Button';
 import TelegramIcon from '@mui/icons-material/Telegram';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import './chatRoom.css';
 import { useNavigate } from 'react-router-dom';
+import CountdownTimer from './CountdownTimer';
 
 
 const userId = localStorage.getItem('userId');
@@ -188,6 +188,8 @@ function ChatRoomComponent() {
 
     const navigate = useNavigate();
     const [valueMessage, setValueMessage] = useState();
+    const [minutes, setMinutes] = useState(0);
+    const [seconds, setSeconds] = useState(0);
 
     const endConversation = () => {
         navigate('/home')
@@ -196,20 +198,46 @@ function ChatRoomComponent() {
     const sendMessage = () => {
 
     }
+
+    useEffect(() => {
+        const countdown = setInterval(() => {
+            if (seconds === 59) {
+                setMinutes(prev => prev + 1);
+                setSeconds(-1);
+            }
+
+            if (seconds >= 0) {
+                setSeconds(prev => prev + 1);
+            }
+        }, 1000);
+
+        return () => clearInterval(countdown);
+    }, [minutes, seconds]);
+
+    const formatTime = (time) => {
+        return time < 10 ? `0${time}` : time;
+    };
     return (
         <Grid container className='layout-children-grid'>
             <Grid item xs={12} className='layout-children-right chat-room'>
-                <Grid className='chat-right-title text-center-flex'>
+                <Grid className='chat-right-title text-around-flex'>
+                    <Grid>
+                        <span>{formatTime(minutes)}:</span>
+                        <span>{formatTime(seconds)}</span>
+                    </Grid>
                     <Typography m={0} align='center' variant="p" gutterBottom>
                         phòng trao đổi
                     </Typography>
+                    <Button className='ipad-pc ' variant="contained" color="error" onClick={endConversation}>
+                        END
+                    </Button>
                 </Grid>
                 <Grid className='layout-children-right-content chat-right'>
                     <List className='layout-children-list-mentor chat-content'>
                         {
                             conversations.length > 0 && conversations.map((obj, key) => {
                                 return (
-                                    <ListItem className={obj.id === userId ? 'justify-end' : ''}>
+                                    <ListItem key={key} className={obj.id === userId ? 'justify-end' : ''}>
                                         <Grid>
                                             <Grid className={obj.id === userId ? 'text-end' : ''}>
                                                 <Typography ml={1} variant="p" gutterBottom>
@@ -222,14 +250,15 @@ function ChatRoomComponent() {
                                                         return (
                                                             <ListItem
                                                                 className={obj.id === userId ? 'messages-item justify-end' : 'messages-item'}
+                                                                key={key}
                                                             >
-                                                                <Typography 
+                                                                <Typography
                                                                     className={key === 0 && obj.message.length > 2 ?
-                                                                    'messages-item-text first-message' :
-                                                                    `${key === obj.message.length - 1 && obj.message.length > 2 ?
-                                                                        'messages-item-text last-message' : 'messages-item-text middle-message'}`}
-                                                                    ml={1} 
-                                                                    variant="body1" 
+                                                                        'messages-item-text first-message' :
+                                                                        `${key === obj.message.length - 1 && obj.message.length > 2 ?
+                                                                            'messages-item-text last-message' : 'messages-item-text middle-message'}`}
+                                                                    ml={1}
+                                                                    variant="body1"
                                                                     gutterBottom
                                                                 >
                                                                     {mes}
@@ -248,7 +277,7 @@ function ChatRoomComponent() {
                 </Grid>
                 <Grid className='message-input'>
                     <Grid container className='message-input-content'>
-                        <Grid item className='message-input-tag' xs={7} sm={9} md={10} pr={1}>
+                        <Grid item className='message-input-tag' xs={9} sm={9} md={10} lg={11} pr={1}>
                             <input
                                 value={valueMessage}
                                 onChange={(e) => setValueMessage(e.target.value)}
@@ -258,7 +287,7 @@ function ChatRoomComponent() {
                             </input>
                         </Grid>
 
-                        <Grid item xs={5} sm={3} md={2} className='message-input-send'>
+                        <Grid item xs={3} sm={3} md={2} lg={1} className='message-input-send'>
                             <TelegramIcon className='message-input-send-icon' />
                             <Button
                                 component="label"
@@ -268,9 +297,6 @@ function ChatRoomComponent() {
                                     hidden
                                 />
                                 <ImageIcon className='message-input-send-icon' />
-                            </Button>
-                            <Button className='ipad-pc' variant="contained" color="error" onClick={endConversation}>
-                                END
                             </Button>
                         </Grid>
                     </Grid>
