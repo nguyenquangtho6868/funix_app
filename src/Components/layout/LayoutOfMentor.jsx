@@ -189,7 +189,7 @@ function LayoutOfMentorComponent() {
                         <List>
                             {listGroupConversation.length > 0 && listGroupConversation.map((obj, key) => {
                                 return (
-                                    <ListItem button key={key} onClick={moveToGroupChatMobile}>
+                                    <ListItem button key={key} onClick={moveToGroupChatMobile} className='list-group-chat-item'>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3} sm={2} className='text-center-justify'>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />

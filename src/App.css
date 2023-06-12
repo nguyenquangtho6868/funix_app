@@ -112,6 +112,13 @@ body {
     padding-left: 0.4rem !important;
   }
   
+  .group-chat-item-right {
+    margin-bottom: 1rem;
+  }
+
+  .list-group-chat-item {
+    margin-bottom: 0.5rem !important;
+  }
 }
 
 @media (max-width: 280px) {
