@@ -1,15 +1,11 @@
 html {
   height: 100%;
   font-size: 12px;
-  height: -webkit-fill-available;
 }
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
-  /* background-color: #dfdec0; */
 }
 
 .form-error {
@@ -83,6 +79,10 @@ body {
 @media (max-width: 820px) {
   .mobile {
     display: block;
+  }
+
+  .chat-room {
+    max-height: -webkit-fill-available;
   }
 
   .list-notification {
