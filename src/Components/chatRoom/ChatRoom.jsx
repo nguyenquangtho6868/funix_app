@@ -221,12 +221,17 @@ function ChatRoomComponent() {
                                                     obj.message.map((mes, key) => {
                                                         return (
                                                             <ListItem
-                                                                className={key === 0 && obj.message.length > 2 ?
-                                                                    'messages-item first-message' :
-                                                                    `${key === obj.message.length - 1 && obj.message.length > 2 ?
-                                                                        'messages-item last-message' : 'messages-item middle-message'}`}
+                                                                className={obj.id === userId ? 'messages-item justify-end' : 'messages-item'}
                                                             >
-                                                                <Typography className='messages-item-text' ml={1} variant="body1" gutterBottom>
+                                                                <Typography 
+                                                                    className={key === 0 && obj.message.length > 2 ?
+                                                                    'messages-item-text first-message' :
+                                                                    `${key === obj.message.length - 1 && obj.message.length > 2 ?
+                                                                        'messages-item-text last-message' : 'messages-item-text middle-message'}`}
+                                                                    ml={1} 
+                                                                    variant="body1" 
+                                                                    gutterBottom
+                                                                >
                                                                     {mes}
                                                                 </Typography>
                                                             </ListItem>
@@ -241,31 +246,33 @@ function ChatRoomComponent() {
                         }
                     </List>
                 </Grid>
-                <Grid container className='message-input'>
-                    <Grid item className='message-input-tag' xs={7} sm={9} md={10} pr={1}>
-                        <input
-                            value={valueMessage}
-                            onChange={(e) => setValueMessage(e.target.value)}
-                            className='message-input-value'
-                            placeholder='Nhập thông tin...'
-                        >
-                        </input>
-                    </Grid>
-
-                    <Grid item xs={5} sm={3} md={2} className='message-input-send'>
-                        <TelegramIcon className='message-input-send-icon' />
-                        <Button
-                            component="label"
-                        >
+                <Grid className='message-input'>
+                    <Grid container className='message-input-content'>
+                        <Grid item className='message-input-tag' xs={7} sm={9} md={10} pr={1}>
                             <input
-                                type="file"
-                                hidden
-                            />
-                            <ImageIcon className='message-input-send-icon' />
-                        </Button>
-                        <Button className='ipad-pc' variant="contained" color="error" onClick={endConversation}>
-                            END
-                        </Button>
+                                value={valueMessage}
+                                onChange={(e) => setValueMessage(e.target.value)}
+                                className='message-input-value'
+                                placeholder='Nhập thông tin...'
+                            >
+                            </input>
+                        </Grid>
+
+                        <Grid item xs={5} sm={3} md={2} className='message-input-send'>
+                            <TelegramIcon className='message-input-send-icon' />
+                            <Button
+                                component="label"
+                            >
+                                <input
+                                    type="file"
+                                    hidden
+                                />
+                                <ImageIcon className='message-input-send-icon' />
+                            </Button>
+                            <Button className='ipad-pc' variant="contained" color="error" onClick={endConversation}>
+                                END
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>

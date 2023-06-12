@@ -99,10 +99,6 @@ body {
 }
 
 @media (max-width: 540px) {
-  .chat-content {
-    max-height: 72vh;
-  }
-
   .student-question {
     width: 70%;
   }
