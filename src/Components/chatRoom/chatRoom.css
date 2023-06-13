@@ -85,9 +85,13 @@
 
 .message-input-send-icon {
     font-size: 2rem !important; 
-    color: blue;
+    color: #f5dddd;
     cursor: pointer;
-    transition: 0.2s linear;
+    transition: 0.3s linear;
+}
+
+.message-input-send-icon:hover {
+    scale: 1.2;
 }
 
 .message-input-content {
