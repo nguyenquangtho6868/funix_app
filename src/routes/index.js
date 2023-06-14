@@ -1,7 +1,8 @@
 const loginController = require('../controllers/AuthController');
 const userController = require('../controllers/UserController');
 const AuthMiddleware = require('../middleware/authMiddleware');
-const CourseController = require('../controllers/CourseController')
+const CourseController = require('../controllers/CourseController');
+const NotificationController = require('../controllers/notificationController');
 
 function route(app) {
 
@@ -20,6 +21,11 @@ function route(app) {
     // app.delete('/edit-course',AuthMiddleware.authLoginNoRole,CourseController.editUser);
 
     // Chat room
+
+
+    // Notification 
+    app.post('/get-list-notification',NotificationController.getNotificationDetail);
+
 }
 
 module.exports = route;
