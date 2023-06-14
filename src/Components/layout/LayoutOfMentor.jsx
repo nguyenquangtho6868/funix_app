@@ -140,7 +140,7 @@ function LayoutOfMentorComponent() {
                     </Grid>
                     <Grid className='list-group-chat mobile' mt={1}>
                         <List>
-                            {courses.length > 0 && courses.map((obj, key) => {
+                            {listCourses.length > 0 && listCourses.map((obj, key) => {
                                 return (
                                     <ListItem button key={key} onClick={() => moveToGroupChatMobile(obj._id)} className='list-group-chat-item'>
                                         <Grid container rowSpacing={4}>
