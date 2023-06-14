@@ -44,71 +44,24 @@ function LayoutOfMentorComponent() {
     const { setIsOutlet, isOutlet } = useContext(AuthContext);
     const [listCourses, setListCourse] = useState([]);
     const [courses, setCourses] = useState([]);
-    const [listGroupConversation, setListGroupConversation] = useState([
-        {
-            name: 'NODEJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'HTML,CSS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'REACTJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'JAVA',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'VUEJS',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'SQL SEVER',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'JAVASCRIPT',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: '.NET',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        },
-        {
-            name: 'PYTHON',
-            guyOfPresent: 'Các mentor cho em hỏi phần validate bằng formik với ạ',
-            name_guy: 'Phú Chu'
-        }
-    ]);
 
     const moveToChatRoom = (event) => {
         navigate('/chat-room')
     };
 
-    const moveToGroupChat = (event) => {
+    const moveToGroupChat = (id) => {
         setIsOutlet(true);
-        navigate('/home/group-chat-mentor')
+        navigate(`/home/group-chat-mentor/${id}`)
     };
 
-    const moveToGroupChatMobile = (event) => {
-        navigate('/group-chat-mentor')
+    const moveToGroupChatMobile = (id) => {
+        navigate(`/group-chat-mentor/${id}`)
     };
 
     useEffect(() => {
         getCourses((rs) => {
             if (rs.statusCode === 200 && rs.data.length > 0) {
-                setListCourse(rs.data.map(obj => obj.code));
+                setListCourse(rs.data);
             }
         })
     }, [])
@@ -134,13 +87,13 @@ function LayoutOfMentorComponent() {
                             )}
                             MenuProps={MenuProps}
                         >
-                            {listCourses.length > 0 && listCourses.map((name) => (
+                            {listCourses.length > 0 && listCourses.map((obj,key) => (
                                 <MenuItem
-                                    key={name}
-                                    value={name}
-                                    style={getStyles(name, courses, theme)}
+                                    key={key}
+                                    value={obj._id}
+                                    style={getStyles(obj._id, courses, theme)}
                                 >
-                                    {name}
+                                    {obj.code}
                                 </MenuItem>
                             ))}
                         </Select>
@@ -148,9 +101,9 @@ function LayoutOfMentorComponent() {
 
                     <Grid className='list-group-chat ipad-pc' mt={1}>
                         <List>
-                            {listGroupConversation.length > 0 && listGroupConversation.map((obj, key) => {
+                            {listCourses.length > 0 && listCourses.map((obj, key) => {
                                 return (
-                                    <ListItem button key={key} onClick={moveToGroupChat}>
+                                    <ListItem button key={key} onClick={() => moveToGroupChat(obj._id)}>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3}>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
@@ -164,7 +117,7 @@ function LayoutOfMentorComponent() {
                                                         noWrap={true}
                                                         className='layout-children-content-item-title'
                                                     >
-                                                        {obj.name}
+                                                        {obj.code}
                                                     </Typography>
                                                 </FormControl>
                                                 <FormControl fullWidth>
@@ -175,7 +128,7 @@ function LayoutOfMentorComponent() {
                                                         gutterBottom
                                                         className='layout-children-content-item-title'
                                                     >
-                                                        <Typography variant='p'>{obj.name_guy}</Typography> : {obj.guyOfPresent}
+                                                        {obj.name}
                                                     </Typography>
                                                 </FormControl>
                                             </Grid>
@@ -187,9 +140,9 @@ function LayoutOfMentorComponent() {
                     </Grid>
                     <Grid className='list-group-chat mobile' mt={1}>
                         <List>
-                            {listGroupConversation.length > 0 && listGroupConversation.map((obj, key) => {
+                            {courses.length > 0 && courses.map((obj, key) => {
                                 return (
-                                    <ListItem button key={key} onClick={moveToGroupChatMobile} className='list-group-chat-item'>
+                                    <ListItem button key={key} onClick={() => moveToGroupChatMobile(obj._id)} className='list-group-chat-item'>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3} sm={2} className='text-center-justify'>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
@@ -203,7 +156,7 @@ function LayoutOfMentorComponent() {
                                                             noWrap={true}
                                                             className='layout-children-content-item-title  group-chat-content-title'
                                                         >
-                                                            {obj.name}
+                                                            {obj.code}
                                                         </Typography>
                                                     </FormControl>
                                                     <FormControl fullWidth>
@@ -213,7 +166,7 @@ function LayoutOfMentorComponent() {
                                                             gutterBottom
                                                             className='layout-children-content-item-title  group-chat-content-title'
                                                         >
-                                                            <Typography variant='p'>{obj.name_guy}</Typography> : {obj.guyOfPresent}
+                                                            {obj.name}
                                                         </Typography>
                                                     </FormControl>
                                                 </Grid>

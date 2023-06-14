@@ -22,11 +22,11 @@ function App() {
             <Route path="/" element={<LoginComponent />} />
             <Route path="/home" element={<LayoutComponent />}>
               <Route path="" element={<LayoutChildrenComponent />}>
-                <Route path="group-chat-mentor" element={<LayoutMentorChildComponent />} />
+                <Route path="group-chat-mentor/:id" element={<LayoutMentorChildComponent />} />
               </Route>
               <Route path="history" element={<HistoryComponent />} />
             </Route>
-            <Route path="group-chat-mentor" element={<LayoutMentorChildComponent />} />
+            <Route path="group-chat-mentor/:id" element={<LayoutMentorChildComponent />} />
             <Route path="chat-room" element={<ChatRoomComponent />} />
           </Routes>
           <ToastContainer />

@@ -9,8 +9,12 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getlistNotification } from '../../Services/NotificationService';
+import { API_URL } from '../../Constants/ApiConstant';
+import io from 'socket.io-client';
 
+const socket = io(API_URL);
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -18,6 +22,7 @@ const ITEM_PADDING_TOP = 8;
 
 function LayoutMentorChildComponent() {
     const theme = useTheme();
+    const { id } = useParams();
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState([
         {
@@ -28,38 +33,6 @@ function LayoutMentorChildComponent() {
             description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
             date: Date.now(),
         },
-        {
-            id: 'nociasd',
-            name_student: 'Phú Chu',
-            path: '',
-            question: "Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với  ",
-            description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
-            date: Date.now(),
-        },
-        {
-            id: 'nociasd',
-            name_student: 'Phú Chu',
-            path: '',
-            question: "Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với  ",
-            description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
-            date: Date.now(),
-        },
-        {
-            id: 'nociasd',
-            name_student: 'Phú Chu',
-            path: '',
-            question: "Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với  ",
-            description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
-            date: Date.now(),
-        },
-        {
-            id: 'nociasd',
-            name_student: 'Phú Chu',
-            path: '',
-            question: "Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với  ",
-            description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
-            date: Date.now(),
-        }
     ]);
 
     const backView = () => {
@@ -71,8 +44,22 @@ function LayoutMentorChildComponent() {
     }
 
     useEffect(() => {
-
+        getlistNotification((rs) => {
+            console.log(rs);
+            setNotifications(prev => [...prev,...rs.data])
+        }, id)
     }, [])
+
+    useEffect(() => {
+        socket.on(`get-create-notification/${id}`, (data) => {
+            setNotifications(prev => [...prev,data])
+        });
+
+        return () => {
+          socket.off();
+        };
+    }, [notifications]);
+    
     return (
         <Grid className='layout-children'>
             <Grid className='layout-mentor-child'>
@@ -126,12 +113,12 @@ function LayoutMentorChildComponent() {
                                             </Typography>
                                             <Grid>
                                                 <Typography variant="body1" gutterBottom className='text-question'>
-                                                    <Typography>Câu hỏi :</Typography> {obj.question}
+                                                    <Typography variant='p'>Câu hỏi :</Typography> {obj.question}
                                                 </Typography>
                                             </Grid>
                                             <Grid>
                                                 <Typography variant="body1" gutterBottom className='text-question'>
-                                                    <Typography>Mô tả :</Typography> {obj.description}
+                                                    <Typography variant='p'>Mô tả :</Typography> {obj.description}
                                                 </Typography>
                                             </Grid>
                                             <Grid className='text-center'>
