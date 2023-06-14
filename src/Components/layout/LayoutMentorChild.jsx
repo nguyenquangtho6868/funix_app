@@ -24,16 +24,7 @@ function LayoutMentorChildComponent() {
     const theme = useTheme();
     const { id } = useParams();
     const navigate = useNavigate();
-    const [notifications, setNotifications] = useState([
-        {
-            id: 'nociasd',
-            name_student: 'Phú Chu',
-            path: '',
-            question: "Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với Em thắc mắc về firebase, mentor nào rảnh hỗ trợ em với  ",
-            description: 'Em đã tìm hiểu tất cả thông tin trên stack overflow , google, chat gpt nhưng vẫn chưa có kết quả ạ',
-            date: Date.now(),
-        },
-    ]);
+    const [notifications, setNotifications] = useState([]);
 
     const backView = () => {
         navigate('/home')
@@ -45,10 +36,9 @@ function LayoutMentorChildComponent() {
 
     useEffect(() => {
         getlistNotification((rs) => {
-            console.log(rs);
-            setNotifications(prev => [...prev,...rs.data])
+            setNotifications(rs.data)
         }, id)
-    }, [])
+    }, [id])
 
     useEffect(() => {
         socket.on(`get-create-notification/${id}`, (data) => {
