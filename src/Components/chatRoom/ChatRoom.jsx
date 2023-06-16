@@ -55,7 +55,7 @@ function ChatRoomComponent() {
             content: valueMessage,
             room_id: roomId,
         }
-        if(e.key === 'Enter') {
+        if(valueMessage !== '' && e.key === 'Enter') {
             socket.emit('send-message', data);
             setValueMessage('');
         }
