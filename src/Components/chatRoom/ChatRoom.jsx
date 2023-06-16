@@ -44,7 +44,8 @@ function ChatRoomComponent() {
             room_id: roomId,
         }
         if(valueMessage !== '') {
-            socket.emit('send-message', data)
+            socket.emit('send-message', data);
+            setValueMessage('');
         }
     }
 
@@ -55,7 +56,8 @@ function ChatRoomComponent() {
             room_id: roomId,
         }
         if(e.key === 'Enter') {
-            socket.emit('send-message', data)
+            socket.emit('send-message', data);
+            setValueMessage('');
         }
     }
 
@@ -88,7 +90,6 @@ function ChatRoomComponent() {
     useEffect(() => {
         socket.on('create-new-message', (data) => {
             setConversations(prev => [...prev,...data]);
-            setValueMessage('');
         });
 
         return () => {
