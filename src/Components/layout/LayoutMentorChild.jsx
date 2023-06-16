@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getlistNotification } from '../../Services/NotificationService';
+import { toast } from 'react-toastify';
 import { API_URL } from '../../Constants/ApiConstant';
 import io from 'socket.io-client';
 
@@ -23,6 +24,7 @@ const ITEM_PADDING_TOP = 8;
 function LayoutMentorChildComponent() {
     const theme = useTheme();
     const { id } = useParams();
+    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
 
@@ -32,6 +34,15 @@ function LayoutMentorChildComponent() {
 
     const moveToChatRoom = () => {
         navigate('/chat-room')
+    }
+
+    const supportNow = (obj) => {
+        let data = {
+            notification_id: obj._id,
+            roomId: obj.room,
+            mentor_id: userId
+        }
+        socket.emit('mentor-support-now', data);
     }
 
     useEffect(() => {
@@ -45,10 +56,18 @@ function LayoutMentorChildComponent() {
             setNotifications(prev => [...prev,data])
         });
 
+        socket.on('quantity-room-chat-full', () => {
+            toast.warning('Phòng này đã có Mentor hỗ trợ!')
+        });
+
+        socket.on('join-room-chat-success', (data) => {
+            navigate(`/chat-room/${data.roomId}`)
+        });
+
         return () => {
           socket.off();
         };
-    }, [notifications]);
+    }, []);
     
     return (
         <Grid className='layout-children'>
@@ -112,7 +131,7 @@ function LayoutMentorChildComponent() {
                                                 </Typography>
                                             </Grid>
                                             <Grid className='text-center'>
-                                                <Button onClick={moveToChatRoom} className='btn-support-student' color='secondary'>
+                                                <Button onClick={() => supportNow(obj)} className='btn-support-student' color='secondary'>
                                                     Hỗ Trợ Ngay
                                                 </Button>
                                             </Grid>

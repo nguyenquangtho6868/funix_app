@@ -36,7 +36,7 @@ const MenuProps = {
 function getStyles(id, theme) {
     return {
         fontWeight:
-            id? theme.typography.fontWeightRegular
+            id ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
 }
@@ -58,7 +58,6 @@ function LayoutChildrenComponent() {
             question: Yup.string().required('Trường này không được bỏ trống!'),
             description: Yup.string().required('Trường này không được bỏ trống!'),
             course_id: Yup.string().required('Bạn chưa chọn môn học!'),
-
         }),
         onSubmit: (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
@@ -68,13 +67,9 @@ function LayoutChildrenComponent() {
                 course_id: values.course_id,
                 user_id: userId
             }
-            socket.emit('post-notification',data)
+            socket.emit('post-notification', data);
         },
     })
-
-    const moveToChatRoom = (event) => {
-        navigate('/chat-room')
-    };
 
     useEffect(() => {
         getCourses((rs) => {
@@ -82,7 +77,18 @@ function LayoutChildrenComponent() {
                 setListCourse(rs.data);
             }
         })
+
+        socket.on('create-room-chat',(data) => {
+            if(data.sender_id === userId) navigate(`/chat-room/${data.room_id}`);
+        });
+
+
+        return () => {
+            socket.off();
+        };
     }, [])
+
+
     return (
         <>
             {
@@ -121,7 +127,7 @@ function LayoutChildrenComponent() {
                             <Grid className='layout-children-content-item'>
                                 <FormControl fullWidth>
                                     <Typography variant="h6" gutterBottom>Câu hỏi (*)</Typography>
-                                    <TextareaAutosize 
+                                    <TextareaAutosize
                                         className='layout-children-content-item-textarea'
                                         value={formik.values.question}
                                         name='question'

@@ -27,7 +27,7 @@ function App() {
               <Route path="history" element={<HistoryComponent />} />
             </Route>
             <Route path="group-chat-mentor/:id" element={<LayoutMentorChildComponent />} />
-            <Route path="chat-room" element={<ChatRoomComponent />} />
+            <Route path="chat-room/:roomId" element={<ChatRoomComponent />} />
           </Routes>
           <ToastContainer />
         </DatePickerProvider>

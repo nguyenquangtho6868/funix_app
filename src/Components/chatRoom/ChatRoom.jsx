@@ -6,32 +6,57 @@ import ImageIcon from '@mui/icons-material/Image';
 import Button from '@mui/material/Button';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import './chatRoom.css';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getRoomChat, endRoomChat } from '../../Services/RoomChatService';
 import { API_URL } from '../../Constants/ApiConstant';
 import io from 'socket.io-client';
 
-// const socket = io(API_URL);
+const socket = io(API_URL);
 
 const userId = localStorage.getItem('userId');
-
-const conversations = [
-    
-];
 
 
 function ChatRoomComponent() {
 
     const navigate = useNavigate();
-    const [valueMessage, setValueMessage] = useState();
+    const { roomId } = useParams();
+    const [valueMessage, setValueMessage] = useState('');
+    const [conversations, setConversations] = useState([])
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
 
     const endConversation = () => {
-        navigate('/home')
+        endRoomChat((rs) => {
+            if(rs.statusCode === 200) {
+                navigate('/home')
+                toast.success('Buổi trao đổi kết thúc!')
+            } else {
+                toast.error('Có lỗi trong quá trình xử lý!')
+            }
+        },roomId)
     }
 
     const sendMessage = () => {
+        let data = {
+            sender: userId,
+            content: valueMessage,
+            room_id: roomId,
+        }
+        if(valueMessage !== '') {
+            socket.emit('send-message', data)
+        }
+    }
 
+    const sendMessageEnter = (e) => {
+        let data = {
+            sender: userId,
+            content: valueMessage,
+            room: roomId,
+        }
+        if(e.key === 'Enter') {
+            socket.emit('send-message', data)
+        }
     }
 
     useEffect(() => {
@@ -48,6 +73,24 @@ function ChatRoomComponent() {
 
         return () => clearInterval(countdown);
     }, [minutes, seconds]);
+
+    useEffect(() => {
+        getRoomChat((rs) => {
+            console.log(rs);
+            setConversations(rs.data)
+        }, roomId)
+    }, [])
+
+    useEffect(() => {
+        socket.on('create-new-message', (data) => {
+            setConversations(prev => [...prev,...data]);
+            setValueMessage('');
+        });
+
+        return () => {
+            socket.off();
+        }
+    }, [])
 
     const formatTime = (time) => {
         return time < 10 ? `0${time}` : time;
@@ -72,36 +115,30 @@ function ChatRoomComponent() {
                         {
                             conversations.length > 0 && conversations.map((obj, key) => {
                                 return (
-                                    <ListItem key={key} className={obj.id === userId ? 'justify-end' : ''}>
+                                    <ListItem key={key} className={obj.sender._id === userId ? 'justify-end' : ''}>
                                         <Grid>
-                                            <Grid className={obj.id === userId ? 'text-end' : ''}>
+                                            <Grid className={obj.sender._id === userId ? 'text-end' : ''}>
                                                 <Typography ml={1} variant="p" gutterBottom>
-                                                    {obj.id === userId ? 'You' : obj.name}
+                                                    {obj.sender._id === userId ? 'You' : obj.sender.username}
                                                 </Typography>
                                             </Grid>
                                             <List>
-                                                {
-                                                    obj.message.map((mes, key) => {
-                                                        return (
-                                                            <ListItem
-                                                                className={obj.id === userId ? 'messages-item justify-end' : 'messages-item'}
-                                                                key={key}
-                                                            >
-                                                                <Typography
-                                                                    className={key === 0 && obj.message.length > 2 ?
-                                                                        'messages-item-text first-message' :
-                                                                        `${key === obj.message.length - 1 && obj.message.length > 2 ?
-                                                                            'messages-item-text last-message' : 'messages-item-text middle-message'}`}
-                                                                    ml={1}
-                                                                    variant="body1"
-                                                                    gutterBottom
-                                                                >
-                                                                    {mes}
-                                                                </Typography>
-                                                            </ListItem>
-                                                        )
-                                                    })
-                                                }
+                                                <ListItem
+                                                    className={obj.id === userId ? 'messages-item justify-end' : 'messages-item'}
+                                                >
+                                                    <Typography
+                                                        className='messages-item-text middle-message'
+                                                        // className={key === 0 && obj.message.length > 2 ?
+                                                        //     'messages-item-text first-message' :
+                                                        //     `${key === obj.message.length - 1 && obj.message.length > 2 ?
+                                                        //         'messages-item-text last-message' : 'messages-item-text middle-message'}`}
+                                                        ml={1}
+                                                        variant="body1"
+                                                        gutterBottom
+                                                    >
+                                                        {obj.content}
+                                                    </Typography>
+                                                </ListItem>
                                             </List>
                                         </Grid>
                                     </ListItem>
@@ -118,12 +155,13 @@ function ChatRoomComponent() {
                                 onChange={(e) => setValueMessage(e.target.value)}
                                 className='message-input-value'
                                 placeholder='Nhập thông tin...'
+                                onKeyUp={(e) => sendMessageEnter(e)}
                             >
                             </input>
                         </Grid>
 
                         <Grid item xs={3} sm={3} md={2} lg={1} className='message-input-send'>
-                            <TelegramIcon className='message-input-send-icon' />
+                            <TelegramIcon className='message-input-send-icon' onClick={sendMessage} />
                             <Button
                                 component="label"
                             >

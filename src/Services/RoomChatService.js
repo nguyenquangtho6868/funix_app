@@ -1,0 +1,29 @@
+import { API_URL } from '../Constants/ApiConstant'
+
+export function getRoomChat(callback, id) {
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/get-room-chat-detail`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({id})
+    })
+      .then(res => res.json())
+      .then(callback);
+}
+
+export function endRoomChat(callback, id) {
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/end-room-chat-detail`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({id})
+    })
+      .then(res => res.json())
+      .then(callback);
+}
