@@ -40,8 +40,13 @@ class RoomChatController {
             if (!id) {
                 return res.status(422).json({ message: 'Have no ID!', statusCode: 500 });
             }
-            const messages = await MessageModel.find({ room: id }).populate('sender');
-            res.json({ message: 'Get room chat Successfully!', data: messages, statusCode: 200 });
+            const getRoom = await RoomChatModel.find({_id: id, is_history: false});
+            if(getRoom.length === 1) {
+                const messages = await MessageModel.find({ room: id }).populate('sender');
+                res.json({ message: 'Get room chat Successfully!', data: messages, statusCode: 200 });
+            } else {
+                return res.status(422).json({ message: 'Have no room chat with this ID!', statusCode: 500 });
+            }
         }
         catch (e) {
             res.status(422).json(e)
@@ -54,8 +59,8 @@ class RoomChatController {
             if (!id) {
                 return res.status(422).json({ message: 'Have no ID!', statusCode: 500 });
             }
-            const roomChatEnd = await RoomChatModel.find({ _id: id }, { is_history: true  });
-            res.json({ message: 'End room chat Successfully!', data: roomChatEnd, statusCode: 200 });
+            await RoomChatModel.updateOne({ _id: id }, { is_history: true });
+            res.json({ message: 'End room chat Successfully!', statusCode: 200 });
         }
         catch (e) {
             res.status(422).json(e)
