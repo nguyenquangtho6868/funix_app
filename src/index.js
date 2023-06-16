@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const router = require('./routes/index');
+const Notification = require('./controllers/notificationController');
+const RoomChatController = require('./controllers/RoomChatController');
 const http = require('http');
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -14,7 +16,6 @@ const io = require("socket.io")(server, {
     }
 });
 
-const Notification = require('./controllers/notificationController')
 
 app.use(cors({
     credentials: true,
@@ -34,9 +35,13 @@ mongoose.connect(process.env.MONGOOSE_URL)
             socket.on('post-notification', (data) => {
                 Notification.addNotification(data, io);
             });
+
+            socket.on('mentor-support-now', (data) => {
+                RoomChatController.addRoomChat(data, io);
+            });
         
-            socket.on('sendMessage', (message) => {
-                io.emit('message', message);
+            socket.on('send-message', (data) => {
+                RoomChatController.sendMessage(data, io);
             });
         
             socket.on('disconnect', () => {

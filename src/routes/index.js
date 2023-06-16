@@ -3,6 +3,7 @@ const userController = require('../controllers/UserController');
 const AuthMiddleware = require('../middleware/authMiddleware');
 const CourseController = require('../controllers/CourseController');
 const NotificationController = require('../controllers/notificationController');
+const RoomChatController = require('../controllers/RoomChatController')
 
 function route(app) {
 
@@ -21,10 +22,11 @@ function route(app) {
     // app.delete('/edit-course',AuthMiddleware.authLoginNoRole,CourseController.editUser);
 
     // Chat room
-
+    app.post('/get-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomChatDetail);
+    app.post('/end-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.endRoomChatDetail);
 
     // Notification 
-    app.post('/get-list-notification',NotificationController.getNotificationDetail);
+    app.post('/get-list-notification',AuthMiddleware.authLoginNoRole,NotificationController.getNotificationDetail);
 
 }
 
