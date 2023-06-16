@@ -52,7 +52,7 @@ function ChatRoomComponent() {
         let data = {
             sender: userId,
             content: valueMessage,
-            room: roomId,
+            room_id: roomId,
         }
         if(e.key === 'Enter') {
             socket.emit('send-message', data)
@@ -76,8 +76,12 @@ function ChatRoomComponent() {
 
     useEffect(() => {
         getRoomChat((rs) => {
-            console.log(rs);
-            setConversations(rs.data)
+            if(rs.statusCode === 200) {
+                setConversations(rs.data)
+            } else {
+                toast.error(rs.message);
+                navigate('/home')
+            }
         }, roomId)
     }, [])
 
@@ -124,7 +128,7 @@ function ChatRoomComponent() {
                                             </Grid>
                                             <List>
                                                 <ListItem
-                                                    className={obj.id === userId ? 'messages-item justify-end' : 'messages-item'}
+                                                    className={obj.sender._id === userId ? 'messages-item justify-end' : 'messages-item'}
                                                 >
                                                     <Typography
                                                         className='messages-item-text middle-message'
