@@ -32,15 +32,21 @@
     text-align: end;
 }
 
+.messages-item-text-sender {
+    background-color: #4d1135;
+}
+
+.messages-item-text-receiver {
+    background-color: #2d2c2c;
+}
+
 .messages-item-text {
     max-width: 30rem;
-    background-color: #2d2c2c;
-    border-radius: 1.2rem;
     padding: 0.5rem 0.8rem;
     word-break: break-all;
     margin: 0 !important;
     color:  #fff;
-    font-size: 1.2rem !important;
+    font-size: 1.4rem !important;
 }
 
 .first-message {
@@ -81,13 +87,14 @@
     justify-content: space-around;
     align-items: center;
     display: flex;
+    transition: 0.5s linear;
 }
 
 .message-input-send-icon {
     font-size: 2rem !important; 
     color: #f5dddd;
     cursor: pointer;
-    transition: 0.3s linear;
+    transition: 0.5s linear;
 }
 
 .message-input-send-icon:hover {
@@ -101,4 +108,37 @@
 
 .message-input-send-icon:hover {
     scale: 1.05;
+}
+
+.button-on-bottom-chat {
+    background-color: #2d2c2c;
+    color: #fff;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    cursor: pointer;
+    padding: 8px;
+    transition: 0.3s linear;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.button-on-bottom-chat:hover {
+    scale: 1.1;
+}
+
+.chat-time-distance {
+    color: #2d2c2c;
+}
+
+.is-typing {
+    transform: translateX(2rem);
+    transition: 0.2s linear;
+}
+
+.not-typing {
+    transform: translateX(0);
+    transition: 0.2s linear;
 }

@@ -39,6 +39,12 @@ body {
   align-items: center;
 }
 
+.text-end-justify {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+}
+
 .text-center-align {
   display: flex;
   align-items: center;
@@ -46,6 +52,14 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.display-none {
+  display: none !important;
+}
+
+.display-block {
+  display: block !important;
 }
 
 /* Responsive */

@@ -17,12 +17,8 @@ import io from 'socket.io-client';
 
 const socket = io(API_URL);
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-
 
 function LayoutMentorChildComponent() {
-    const theme = useTheme();
     const { id } = useParams();
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
@@ -30,10 +26,6 @@ function LayoutMentorChildComponent() {
 
     const backView = () => {
         navigate('/home')
-    }
-
-    const moveToChatRoom = () => {
-        navigate('/chat-room')
     }
 
     const supportNow = (obj) => {
