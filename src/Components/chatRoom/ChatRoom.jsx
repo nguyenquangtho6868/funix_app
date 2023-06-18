@@ -47,7 +47,7 @@ function ChatRoomComponent() {
             sender: userId,
             content: valueMessage,
             room_id: roomId,
-            prev_message: conversations[conversations.length - 1]._id
+            prev_message: conversations[conversations.length - 1]
         }
         if (valueMessage !== '') {
             socket.emit('send-message', data);
