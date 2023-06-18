@@ -17,7 +17,7 @@ class NotificationController {
         });
         await MessageModel.create({
             sender: user_id,
-            content: `Câu hỏi : ${question}, Mô tả : ${description}`,
+            content: [`Câu hỏi : ${question}`, `Mô tả : ${description}`],
             room: room._id,
             createdAtDay,
             createdAtTime

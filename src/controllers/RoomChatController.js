@@ -23,15 +23,24 @@ class RoomChatController {
             minute: "2-digit",
             timeZone: "Asia/Saigon",
         });
-        const newMessage = await MessageModel.create({
-            sender: data.sender,
-            content: data.content,
-            room: data.room_id,
-            createdAtDay,
-            createdAtTime
-        })
-        const getDetailNewMessage = await MessageModel.find(newMessage).populate('sender');
-        io.emit('create-new-message', getDetailNewMessage)
+        const distanceTimeMessage = Number(createdAtTime.slice(3)) - Number(data.prev_message.createdAtTime.slice(3));
+        if (data.sender === data.prev_message.sender._id && distanceTimeMessage <= 5) {
+            await MessageModel.updateOne({ _id: data.prev_message._id }, {
+                content: [...data.prev_message.content, data.content],
+            });
+            const getDetailNewMessage = await MessageModel.find({_id: data.prev_message._id}).populate('sender');
+            io.emit('update-message', getDetailNewMessage);
+        } else {
+            const newMessage = await MessageModel.create({
+                sender: data.sender,
+                content: [data.content],
+                room: data.room_id,
+                createdAtDay,
+                createdAtTime
+            });
+            const getDetailNewMessage = await MessageModel.find(newMessage).populate('sender');
+            io.emit('create-new-message', getDetailNewMessage);
+        }
     }
 
     async getRoomChatDetail(req, res) {
@@ -40,8 +49,8 @@ class RoomChatController {
             if (!id) {
                 return res.status(422).json({ message: 'Have no ID!', statusCode: 500 });
             }
-            const getRoom = await RoomChatModel.find({_id: id, is_history: false});
-            if(getRoom.length === 1) {
+            const getRoom = await RoomChatModel.find({ _id: id, is_history: false });
+            if (getRoom.length === 1) {
                 const messages = await MessageModel.find({ room: id }).populate('sender');
                 res.json({ message: 'Get room chat Successfully!', data: messages, statusCode: 200 });
             } else {
@@ -49,7 +58,7 @@ class RoomChatController {
             }
         }
         catch (e) {
-            res.status(422).json(e)
+            res.status(422).json(e);
         }
     }
 
