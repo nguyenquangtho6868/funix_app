@@ -21,7 +21,7 @@ import { useState, useEffect } from 'react';
 
 export default function AddUserDialog(props) {
 
-  const [listCourse,setListCourse] = useState([])
+  const [listCourse, setListCourse] = useState([])
 
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -32,22 +32,12 @@ export default function AddUserDialog(props) {
         width: 250,
       },
     },
-  };
+  }
 
-  const names = [
-    'DBI202X',
-    'NJS101X',
-    'NJS301X',
-    'PRF192X',
-    'PRM391X',
-    'RJS301X',
-    'ƯEB101X',
-  ];
-
-  function getStyles(name, personName, theme) {
+  function getStyles(name, courses, theme) {
     return {
       fontWeight:
-        personName.indexOf(name) === -1
+        courses.indexOf(name) === -1
           ? theme.typography.fontWeightRegular
           : theme.typography.fontWeightMedium,
     };
@@ -57,26 +47,26 @@ export default function AddUserDialog(props) {
 
   const formik = useFormik({
     initialValues: {
-        username: '',
-        email: '',
-        role: '',
-        courses: [],
+      username: '',
+      email: '',
+      role: '',
+      courses: [],
     },
     validationSchema: Yup.object({
-        username: Yup.string().min(6,'Tối thiểu 6 ký tự').required('Trường này là băt buộc!'),
-        email: Yup
+      username: Yup.string().min(6, 'Tối thiểu 6 ký tự').required('Trường này là băt buộc!'),
+      email: Yup
         .string()
-        .min(6,'Tối thiểu 6 ký tự')
-        .matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,'Bạn chưa nhập đúng định dạng email!')
+        .min(6, 'Tối thiểu 6 ký tự')
+        .matches(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, 'Bạn chưa nhập đúng định dạng email!')
         .required('Trường này là băt buộc!'),
-        role: Yup
+      role: Yup
         .string()
         .required('Trường này là băt buộc!'),
-        courses: Yup
+      courses: Yup
         .array()
         .min(1, 'Trường này là băt buộc!')
     }),
-    onSubmit: (values, {setSubmitting, resetForm}) => {
+    onSubmit: (values, { setSubmitting, resetForm }) => {
       props.handleClose();
       let data = {
         username: values.username,
@@ -85,28 +75,28 @@ export default function AddUserDialog(props) {
         email: values.email
       }
       addUser((res) => {
-          if(res.statusCode === 200) {
-              toast.success("Thêm mới thành công!",{className:'toast-message'});
-              setSubmitting(false);
-              resetForm();
-              props.getUsers();
+        if (res.statusCode === 200) {
+          toast.success("Thêm mới thành công!", { className: 'toast-message' });
+          setSubmitting(false);
+          resetForm();
+          props.getUsers();
+        } else {
+          if (res.message) {
+            toast.error(res.message, { className: 'toast-message' });
           } else {
-            if(res.message) {
-              toast.error(res.message,{className:'toast-message'});
-            } else {
-              toast.error("Có lỗi trong quá trình xử lý!",{className:'toast-message'});
-            }
+            toast.error("Có lỗi trong quá trình xử lý!", { className: 'toast-message' });
           }
+        }
       }, data)
     },
-})
+  })
 
   useEffect(() => {
     getCourses((rs) => {
       console.log(rs);
-      if(rs.statusCode === 200 && rs.data.length > 0) {
-        setListCourse(rs.data.map(obj => obj.code));
-      } 
+      if (rs.statusCode === 200 && rs.data.length > 0) {
+        setListCourse(rs.data);
+      }
     })
   }, []);
 
@@ -122,11 +112,11 @@ export default function AddUserDialog(props) {
             label="Username"
             fullWidth
             variant="standard"
-            style={{minWidth: '30rem'}}
+            style={{ minWidth: '30rem' }}
             onChange={formik.handleChange}
             value={formik.values.username}
           />
-           {formik.errors.username && formik.touched.username && (<div className="form-error mt-2">{formik.errors.username}</div>)}
+          {formik.errors.username && formik.touched.username && (<div className="form-error mt-2">{formik.errors.username}</div>)}
         </DialogContent>
 
         <DialogContent>
@@ -139,7 +129,7 @@ export default function AddUserDialog(props) {
             name='email'
             fullWidth
             variant="standard"
-            style={{minWidth: '30rem'}}
+            style={{ minWidth: '30rem' }}
             onChange={formik.handleChange}
             value={formik.values.email}
           />
@@ -181,27 +171,27 @@ export default function AddUserDialog(props) {
               input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
               renderValue={(selected) => (
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} />
+                  {selected.map((value,key) => (
+                    <Chip key={key} label={value.code} />
                   ))}
                 </Box>
               )}
               MenuProps={MenuProps}
             >
-              {listCourse.length > 0 && listCourse.map((name) => (
+              {listCourse.length > 0 && listCourse.map((course, key) => (
                 <MenuItem
-                  key={name}
-                  value={name}
-                  style={getStyles(name, formik.values.courses, theme)}
+                  key={key}
+                  value={course}
+                  style={getStyles(course, formik.values.courses, theme)}
                 >
-                  {name}
+                  {course.code}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
           {formik.errors.courses && formik.touched.courses && (<div className="form-error mt-2">{formik.errors.courses}</div>)}
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={props.handleClose}>Cancel</Button>
           <Button onClick={formik.handleSubmit}>Add</Button>

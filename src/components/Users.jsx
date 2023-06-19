@@ -54,6 +54,15 @@ function UsersComponent() {
       headerName: 'Courses',
       width: 200,
       editable: true,
+      renderCell: (params) => (
+        <div>
+          {
+            params.value.map((item, key) => {
+              return <span key={key}> {item.code + ','}</span>
+            })
+          }
+        </div>
+      )
     },
     {
       field: 'id',
