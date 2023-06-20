@@ -7,10 +7,7 @@ const UserSchema = new Schema({
     email: String,
     password: String,
     role: String,
-    courses: {
-        type: Schema.Types.ObjectId,
-        ref: 'courses'
-    },
+    courses: Array,
 });
 
 const UserModel = mongoose.model('users', UserSchema);
