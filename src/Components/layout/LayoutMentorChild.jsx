@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import './layout.css'
-import { useTheme } from '@mui/material/styles';
-import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import { List, ListItem } from '@mui/material';
+import { getCourseDetail } from '../../Services/CourseService';
+import { Box, List, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
@@ -19,10 +18,14 @@ const socket = io(API_URL);
 
 
 function LayoutMentorChildComponent() {
+
+    const countdown = 10000;
+    const list = useRef(null);
     const { id } = useParams();
     const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     const [notifications, setNotifications] = useState([]);
+    const [courseDetail, setCourseDetail] = useState([]);
 
     const backView = () => {
         navigate('/home')
@@ -40,27 +43,43 @@ function LayoutMentorChildComponent() {
     useEffect(() => {
         getlistNotification((rs) => {
             setNotifications(rs.data)
+        }, id);
+        getCourseDetail((rs) => {
+            setCourseDetail(...rs.data)
         }, id)
     }, [id])
 
     useEffect(() => {
         socket.on(`get-create-notification/${id}`, (data) => {
-            setNotifications(prev => [...prev,data])
+            setNotifications(prev => [...prev, data]);
+            console.log(22);
+            setTimeout(() => {
+                console.log('đã chạy');
+                socket.emit('request-delete-notification', data._id);
+            }, countdown)
+        });
+
+        socket.on('delete-notification', (id) => {
+            setNotifications(notifications.filter(obj => obj._id !== id));
         });
 
         socket.on('quantity-room-chat-full', () => {
             toast.warning('Phòng này đã có Mentor hỗ trợ!')
         });
 
-        socket.on('join-room-chat-success', (data) => {
+        socket.on(`join-room-chat-success/${userId}`, (data) => {
             navigate(`/chat-room/${data.roomId}`)
         });
 
         return () => {
-          socket.off();
+            socket.off();
         };
     }, []);
-    
+
+    useEffect(() => {
+        list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
+    }, [notifications])
+
     return (
         <Grid className='layout-children'>
             <Grid className='layout-mentor-child'>
@@ -82,7 +101,7 @@ function LayoutMentorChildComponent() {
                                     noWrap={true}
                                     className='layout-children-content-item-title group-chat-content-title  group-chat-content-title-top'
                                 >
-                                    NODEJS
+                                    {courseDetail.code}
                                 </Typography>
                             </Grid>
                             <Grid >
@@ -93,19 +112,18 @@ function LayoutMentorChildComponent() {
                                     gutterBottom
                                     className='layout-children-content-item-title group-chat-content-title text-center-align'
                                 >
-                                    <PermIdentityIcon className='group-chat-content-icon-member' /> 4 Mentors
+                                    {/* <PermIdentityIcon className='group-chat-content-icon-member' /> 4 Mentors */}
+                                    {courseDetail.name}
                                 </Typography>
                             </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid className='layout-mentor-child-content'>
 
-                </Grid>
                 <Grid className='layout-mentor-child-content '>
-                    <List className='layout-children-list-mentor list-notification'>
+                    <List className='layout-children-list-mentor list-notification' ref={list}>
                         {
-                            notifications.length > 0 && notifications.map((obj, key) => {
+                            notifications.length > 0 ? notifications.map((obj, key) => {
                                 return (
                                     <ListItem key={key}>
                                         <Grid className='student-question'>
@@ -130,7 +148,14 @@ function LayoutMentorChildComponent() {
                                         </Grid>
                                     </ListItem>
                                 )
-                            })
+                            }) :
+                                <ListItem>
+                                    <Box display="flex" justifyContent="center"  className='student-question'>
+                                        <Typography ml={1} variant="p" gutterBottom>
+                                            Hiện chưa có học viên cần hỗ trợ
+                                        </Typography>
+                                    </Box>
+                                </ListItem>
                         }
                     </List>
                 </Grid>

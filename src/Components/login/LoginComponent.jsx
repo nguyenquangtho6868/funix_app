@@ -45,6 +45,8 @@ function LoginComponent() {
           localStorage.setItem('userId', res.userId);
           localStorage.setItem('username', res.username);
           localStorage.setItem('role', res.role);
+          localStorage.setItem('minutes', 0);
+          localStorage.setItem('seconds', 0);
         } else {
           setTimeout(() => {
             setIsLoading(false);

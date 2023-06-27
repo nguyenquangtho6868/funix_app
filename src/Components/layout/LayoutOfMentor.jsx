@@ -1,52 +1,45 @@
 import { useState, useEffect, useContext } from 'react';
 import Grid from '@mui/material/Grid';
-import { getCourses } from '../../Services/CourseService';
+import { getCourseDetail } from '../../Services/CourseService';
 import './layout.css'
 import { useTheme } from '@mui/material/styles';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { List, ListItem, ListItemIcon } from '@mui/material';
+import { List, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import { AuthContext } from '../../Context/AuthLogin';
 import Typography from '@mui/material/Typography';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { getUserDetail } from '../../Services/UserService';
 
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-
-function getStyles(name, personName, theme) {
+function getStyles(name, listCourses, theme) {
     return {
         fontWeight:
-            personName.indexOf(name) === -1
+            listCourses.indexOf(name) === -1
                 ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
 }
 
 function LayoutOfMentorComponent() {
+
     const theme = useTheme();
+    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     const { setIsOutlet, isOutlet } = useContext(AuthContext);
     const [listCourses, setListCourse] = useState([]);
-    const [courses, setCourses] = useState([]);
+    const [listCourseChat, setListCourseChat] = useState([]);
+    const [courses, setCourses] = useState("");
 
-    const moveToChatRoom = (event) => {
-        navigate('/chat-room')
+    const handleSelectCourse = (event) => {
+        setCourses(event.target.value);
+        let course_id = event.target.value._id
+        getCourseDetail((rs) => {
+            setListCourseChat(rs.data);
+        }, course_id)
     };
 
     const moveToGroupChat = (id) => {
@@ -59,39 +52,34 @@ function LayoutOfMentorComponent() {
     };
 
     useEffect(() => {
-        getCourses((rs) => {
-            if (rs.statusCode === 200 && rs.data.length > 0) {
-                setListCourse(rs.data);
+        getUserDetail((rs) => {
+            if (rs.statusCode === 200) {
+                setListCourse(rs.data.courses);
+                setListCourseChat(rs.data.courses);
             }
-        })
+        }, userId, "");
     }, [])
     return (
         <Grid className='layout-children'>
             <Grid container className='layout-mentor'>
                 <Grid item xs={12} sm={12} md={4} lg={4} className='layout-mentor-left'>
                     <FormControl fullWidth>
-                        <InputLabel id="demo-multiple-chip-label">Courese</InputLabel>
+                        <InputLabel id="demo-simple-select-helper-label">Courses</InputLabel>
                         <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            multiple
-                            name="courses"
+                            labelId="demo-simple-select-helper-label"
+                            id="demo-simple-select-helper"
                             value={courses}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip key={value} label={value} />
-                                    ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
+                            label="courses"
+                            onChange={(e) => handleSelectCourse(e)}
                         >
-                            {listCourses.length > 0 && listCourses.map((obj,key) => (
+                            <MenuItem value="">
+                                <em>Tất cả</em>
+                            </MenuItem>
+                            {listCourses.length > 0 && listCourses.map((obj, key) => (
                                 <MenuItem
                                     key={key}
-                                    value={obj._id}
-                                    style={getStyles(obj._id, courses, theme)}
+                                    value={obj}
+                                    style={getStyles(obj, listCourses, theme)}
                                 >
                                     {obj.code}
                                 </MenuItem>
@@ -101,7 +89,7 @@ function LayoutOfMentorComponent() {
 
                     <Grid className='list-group-chat ipad-pc' mt={1}>
                         <List>
-                            {listCourses.length > 0 && listCourses.map((obj, key) => {
+                            {listCourseChat.length > 0 && listCourseChat.map((obj, key) => {
                                 return (
                                     <ListItem button key={key} onClick={() => moveToGroupChat(obj._id)}>
                                         <Grid container rowSpacing={4}>
@@ -140,7 +128,7 @@ function LayoutOfMentorComponent() {
                     </Grid>
                     <Grid className='list-group-chat mobile' mt={1}>
                         <List>
-                            {listCourses.length > 0 && listCourses.map((obj, key) => {
+                            {listCourseChat.length > 0 && listCourseChat.map((obj, key) => {
                                 return (
                                     <ListItem button key={key} onClick={() => moveToGroupChatMobile(obj._id)} className='list-group-chat-item'>
                                         <Grid container rowSpacing={4}>

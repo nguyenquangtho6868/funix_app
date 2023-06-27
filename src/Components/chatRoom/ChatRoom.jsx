@@ -26,6 +26,7 @@ function ChatRoomComponent() {
     const { roomId } = useParams();
     const [isBottom, setIsBottom] = useState(false);
     const [isSend, setIsSend] = useState(false);
+    const [isMentorIn, setIsMentorIn] = useState(false);
     const [valueMessage, setValueMessage] = useState('');
     const [conversations, setConversations] = useState([]);
     const [minutes, setMinutes] = useState(0);
@@ -35,7 +36,9 @@ function ChatRoomComponent() {
         endRoomChat((rs) => {
             if (rs.statusCode === 200) {
                 navigate('/home')
-                toast.success('Buổi trao đổi kết thúc!')
+                toast.success('Buổi trao đổi kết thúc!');
+                localStorage.setItem('seconds', 0)
+                localStorage.setItem('minutes', 0);
             } else {
                 toast.error('Có lỗi trong quá trình xử lý!')
             }
@@ -84,19 +87,32 @@ function ChatRoomComponent() {
 
 
     useEffect(() => {
+        const getMinutes = Number(localStorage.getItem('minutes'));
+        const getSeconds = Number(localStorage.getItem('seconds'));
+        if (minutes < getMinutes) setMinutes(getMinutes);
+        if (seconds < getSeconds) setSeconds(getSeconds);
         const countdown = setInterval(() => {
-            if (seconds === 59) {
-                setMinutes(prev => prev + 1);
-                setSeconds(-1);
-            }
+            if (isMentorIn) {
+                if (seconds === 59) {
+                    setMinutes(prev => {
+                        localStorage.setItem('minutes', prev + 1);
+                        return prev + 1;
+                    });
+                    setSeconds(-1);
 
-            if (seconds >= 0) {
-                setSeconds(prev => prev + 1);
+                }
+
+                if (seconds >= 0) {
+                    setSeconds(prev => {
+                        localStorage.setItem('seconds', prev + 1)
+                        return prev + 1;
+                    });
+                }
             }
         }, 1000);
 
         return () => clearInterval(countdown);
-    }, [minutes, seconds]);
+    }, [minutes, seconds, isMentorIn]);
 
     useEffect(() => {
         getRoomChat((rs) => {
@@ -119,18 +135,21 @@ function ChatRoomComponent() {
             setConversations(prev => [...prev.slice(0, prev.length - 1), ...data]);
         });
 
+        socket.on(`mentor-in-room-chat/${roomId}`, (data) => {
+            setIsMentorIn(true);
+        });
+
         return () => {
             socket.off();
         }
     }, [])
 
     useEffect(() => {
-        console.log('conver');
         list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
     }, [conversations]);
 
     useEffect(() => {
-        if(valueMessage === '') {
+        if (valueMessage === '') {
             setIsSend(false);
         } else {
             setIsSend(true);
@@ -200,7 +219,7 @@ function ChatRoomComponent() {
                                                 </List>
                                             </Grid>
                                         </ListItem>
-                                        <Grid className={conversations.length-1 === key? 'text-center-justify chat-time-distance display-none':'text-center-justify chat-time-distance'}>
+                                        <Grid className={conversations.length - 1 === key ? 'text-center-justify chat-time-distance display-none' : 'text-center-justify chat-time-distance'}>
                                             {obj.createdAtTime}
                                         </Grid>
                                     </Grid>
@@ -228,11 +247,11 @@ function ChatRoomComponent() {
                         </Grid>
 
                         <Grid item xs={3} sm={3} md={2} lg={1} className='message-input-send'>
-                            <Grid className={isSend?'is-typing':'not-typing'}>
+                            <Grid className={isSend ? 'is-typing' : 'not-typing'}>
                                 <TelegramIcon className='message-input-send-icon' onClick={sendMessage} />
                             </Grid>
                             <Button
-                                className={isSend? 'display-none': ''}
+                                className={isSend ? 'display-none' : ''}
                                 component="label"
                             >
                                 <input

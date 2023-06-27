@@ -1,6 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { ColorRing } from 'react-loader-spinner';
-import firebase,{ auth } from '../../src/Firebase/Config';
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -10,28 +9,12 @@ function AuthLoginProvider({children}) {
     const [isLoading, setIsLoading] = useState(false);
     const [isOutlet, setIsOutlet] = useState(false);
 
-    // useEffect(() => {
-    //   const unsubcribe = auth.onAuthStateChanged((user) => {
-    //     if(user) {
-    //       setIsLoading(false);
-    //       setUser({
-    //         photoURL: user.multiFactor.user.photoURL,
-    //         displayName: user.multiFactor.user.displayName,
-    //         uid: user.multiFactor.user.uid,
-    //         providerId: user.multiFactor.user.providerId
-    //       })
-    //       navigate('/chat-room');
-    //       return
-    //     } else {
-    //       setIsLoading(false);
-    //       navigate('/');
-    //     }
-    //   });
+    useEffect(() => {
         
-    //   return () => {
-    //     unsubcribe();
-    //   }
-    // }, [navigate]);
+      return () => {
+        
+      }
+    }, [navigate]);
   return (
     <AuthContext.Provider value={{setIsLoading, isOutlet, setIsOutlet}}>
         {isLoading? <div className="loading">

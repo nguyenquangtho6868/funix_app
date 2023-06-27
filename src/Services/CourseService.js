@@ -12,3 +12,17 @@ export function getCourses(callback) {
       .then(res => res.json())
       .then(callback);
 }
+
+export function getCourseDetail(callback,id) {
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/get-list-course-detail`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({id})
+    })
+      .then(res => res.json())
+      .then(callback);
+}

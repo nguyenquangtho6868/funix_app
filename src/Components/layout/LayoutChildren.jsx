@@ -1,6 +1,6 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState , useEffect } from 'react';
 import Grid from '@mui/material/Grid';
-import { getCourses } from '../../Services/CourseService';
+import { getUserDetail } from '../../Services/UserService';
 import './layout.css'
 import { useTheme } from '@mui/material/styles';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -33,10 +33,11 @@ const MenuProps = {
 };
 
 
-function getStyles(id, theme) {
+function getStyles(name, listCourses, theme) {
     return {
         fontWeight:
-            id ? theme.typography.fontWeightRegular
+            listCourses.indexOf(name) === -1
+                ? theme.typography.fontWeightRegular
                 : theme.typography.fontWeightMedium,
     };
 }
@@ -59,7 +60,7 @@ function LayoutChildrenComponent() {
             description: Yup.string().required('Trường này không được bỏ trống!'),
             course_id: Yup.string().required('Bạn chưa chọn môn học!'),
         }),
-        onSubmit: (values, { setSubmitting, resetForm }) => {
+        onSubmit: (values, { setSubmitting }) => {
             setSubmitting(true);
             let data = {
                 question: values.question,
@@ -72,11 +73,11 @@ function LayoutChildrenComponent() {
     })
 
     useEffect(() => {
-        getCourses((rs) => {
-            if (rs.statusCode === 200 && rs.data.length > 0) {
-                setListCourse(rs.data);
+        getUserDetail((rs) => {
+            if (rs.statusCode === 200) {
+                setListCourse(rs.data.courses);
             }
-        })
+        },userId);
 
         socket.on('create-room-chat',(data) => {
             if(data.sender_id === userId) navigate(`/chat-room/${data.room_id}`);
@@ -92,7 +93,7 @@ function LayoutChildrenComponent() {
     return (
         <>
             {
-                role == 'ADMIN' || role == 'MENTOR' ?
+                role === 'ADMIN' || role === 'MENTOR' ?
                     <LayoutOfMentorComponent /> :
                     <Grid className='layout-children'>
                         <Grid container className='layout-children-content'>
@@ -113,7 +114,7 @@ function LayoutChildrenComponent() {
                                             <MenuItem
                                                 key={key}
                                                 value={item._id}
-                                                style={getStyles(item._id, theme)}
+                                                style={getStyles(item._id,listCourses, theme)}
                                             >
                                                 {item.code}
                                             </MenuItem>
