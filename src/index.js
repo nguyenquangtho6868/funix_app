@@ -36,6 +36,11 @@ mongoose.connect(process.env.MONGOOSE_URL)
                 Notification.addNotification(data, io);
             });
 
+            socket.on('request-delete-notification', (id) => {
+                console.log('đã chạy node');
+                Notification.getNotificationDelete(id, io);
+            });
+
             socket.on('mentor-support-now', (data) => {
                 RoomChatController.addRoomChat(data, io);
             });

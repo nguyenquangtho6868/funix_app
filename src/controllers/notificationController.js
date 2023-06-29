@@ -29,7 +29,7 @@ class NotificationController {
             course: course_id,
             room: room._id,
             file: {},
-            createdAt: createdAtDay+'-'+createdAtTime
+            createdAt: createdAtDay + '-' + createdAtTime
         });
 
         io.emit(`get-create-notification/${course_id}`, newNotification);
@@ -45,6 +45,11 @@ class NotificationController {
         catch (e) {
             res.status(422).json(e)
         }
+    }
+
+    async getNotificationDelete(id, io) {
+        await Notification.deleteOne({ _id: id });
+        io.emit('delete-notification', id);
     }
 }
 

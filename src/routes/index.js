@@ -13,10 +13,11 @@ function route(app) {
     app.post('/add-user',AuthMiddleware.authLoginNoRole,userController.addUser);
     app.delete('/delete-user',AuthMiddleware.authLoginNoRole,userController.deleteUser);
     app.delete('/edit-user',AuthMiddleware.authLoginNoRole,userController.editUser);
-    app.delete('/get-user-detail',AuthMiddleware.authLoginNoRole,userController.getUserDetail);
+    app.post('/get-user-detail',AuthMiddleware.authLoginNoRole,userController.getUserDetail);
     
     // Courses
     app.get('/get-list-course',AuthMiddleware.authLoginNoRole,CourseController.getListCourse);
+    app.post('/get-list-course-detail',AuthMiddleware.authLoginNoRole,CourseController.getListCourseDetail);
     app.post('/add-course',AuthMiddleware.authLoginNoRole,CourseController.addCourse);
     app.delete('/delete-course',AuthMiddleware.authLoginNoRole,CourseController.deleteCourse);
     // app.delete('/edit-course',AuthMiddleware.authLoginNoRole,CourseController.editUser);

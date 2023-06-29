@@ -12,7 +12,8 @@ class RoomChatController {
         await RoomChatModel.updateOne({ _id: data.roomId }, {
             users: [...room.users, data.mentor_id]
         });
-        io.emit('join-room-chat-success', data)
+        io.emit(`join-room-chat-success/${data.mentor_id}`, data);
+        io.emit(`mentor-in-room-chat/${data.roomId}`);
     }
 
     async sendMessage(data, io) {

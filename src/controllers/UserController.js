@@ -71,7 +71,7 @@ class UserController {
 
     async getUserDetail(req, res) {
         try {
-            const { id } = req.body;
+            const { id, course_id } = req.body;
             const userDetail = await User.findOne({_id: id});
             res.json({message: 'Get User Detail Successfully!',data: userDetail, statusCode: 200});
         }
