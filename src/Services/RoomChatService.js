@@ -14,6 +14,20 @@ export function getRoomChat(callback, id) {
       .then(callback);
 }
 
+export function getRoomChatWithId(callback, id) {
+    const token = localStorage.getItem('token');
+    fetch(`${API_URL}/get-room-chat`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({id})
+    })
+      .then(res => res.json())
+      .then(callback);
+}
+
 export function endRoomChat(callback, id) {
     const token = localStorage.getItem('token');
     fetch(`${API_URL}/end-room-chat-detail`, {

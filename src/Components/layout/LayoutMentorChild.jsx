@@ -19,7 +19,7 @@ const socket = io(API_URL);
 
 function LayoutMentorChildComponent() {
 
-    const countdown = 10000;
+    const countdown = 60000;
     const list = useRef(null);
     const { id } = useParams();
     const userId = localStorage.getItem('userId');
@@ -38,6 +38,7 @@ function LayoutMentorChildComponent() {
             mentor_id: userId
         }
         socket.emit('mentor-support-now', data);
+        socket.emit('request-delete-notification', obj._id);
     }
 
     useEffect(() => {
@@ -50,18 +51,6 @@ function LayoutMentorChildComponent() {
     }, [id])
 
     useEffect(() => {
-        socket.on(`get-create-notification/${id}`, (data) => {
-            setNotifications(prev => [...prev, data]);
-            console.log(22);
-            setTimeout(() => {
-                console.log('đã chạy');
-                socket.emit('request-delete-notification', data._id);
-            }, countdown)
-        });
-
-        socket.on('delete-notification', (id) => {
-            setNotifications(notifications.filter(obj => obj._id !== id));
-        });
 
         socket.on('quantity-room-chat-full', () => {
             toast.warning('Phòng này đã có Mentor hỗ trợ!')
@@ -78,6 +67,16 @@ function LayoutMentorChildComponent() {
 
     useEffect(() => {
         list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
+        socket.on(`get-create-notification/${id}`, (data) => {
+            setNotifications(prev => [...prev, data]);
+            setTimeout(() => {
+                socket.emit('request-delete-notification', data._id);
+            }, countdown)
+        });
+
+        socket.on('delete-notification', (id) => {
+            setNotifications(prev => prev.filter(obj => obj._id !== id));
+        });
     }, [notifications])
 
     return (

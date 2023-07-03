@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import './chatRoom.css';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getRoomChat, endRoomChat } from '../../Services/RoomChatService';
+import { getRoomChat, endRoomChat, getRoomChatWithId } from '../../Services/RoomChatService';
 import { API_URL } from '../../Constants/ApiConstant';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
@@ -22,6 +22,7 @@ const userId = localStorage.getItem('userId');
 function ChatRoomComponent() {
 
     const list = useRef(null);
+    const userId = localStorage.getItem('userId');
     const navigate = useNavigate();
     const { roomId } = useParams();
     const [isBottom, setIsBottom] = useState(false);
@@ -33,16 +34,38 @@ function ChatRoomComponent() {
     const [seconds, setSeconds] = useState(0);
 
     const endConversation = () => {
-        endRoomChat((rs) => {
+        getRoomChatWithId((rs) => {
             if (rs.statusCode === 200) {
-                navigate('/home')
-                toast.success('Buổi trao đổi kết thúc!');
-                localStorage.setItem('seconds', 0)
-                localStorage.setItem('minutes', 0);
+                const getUser = rs.data.users.filter(item => item !== userId);
+                if(getUser) {
+                    endRoomChat((rs) => {
+                        if (rs.statusCode === 200) {
+                            socket.emit('end-conversation', getUser[0]);
+                            navigate('/home');
+                            toast.success('Buổi trao đổi kết thúc!');
+                            localStorage.setItem('seconds', 0);
+                            localStorage.setItem('minutes', 0);
+                        } else {
+                            toast.error('Có lỗi trong quá trình xử lý!');
+                        }
+                    }, roomId)
+                } else {
+                    endRoomChat((rs) => {
+                        if (rs.statusCode === 200) {
+                            navigate('/home');
+                            toast.success('Buổi trao đổi kết thúc!');
+                            localStorage.setItem('seconds', 0);
+                            localStorage.setItem('minutes', 0);
+                        } else {
+                            toast.error('Có lỗi trong quá trình xử lý!');
+                        }
+                    }, roomId)
+                }
             } else {
-                toast.error('Có lỗi trong quá trình xử lý!')
+                toast.error('Có lỗi trong quá trình xử lý!');
+                return;
             }
-        }, roomId)
+        }, roomId);
     }
 
     const sendMessage = () => {
@@ -115,16 +138,26 @@ function ChatRoomComponent() {
     }, [minutes, seconds, isMentorIn]);
 
     useEffect(() => {
+        getRoomChatWithId((rs) => {
+            if(rs.statusCode === 200) {
+                const checkUser = rs.data.users.some(item => item === userId);
+                if(!checkUser) {
+                    toast.error('Bạn không có quyền truy cập!');
+                    navigate('/home');
+                }
+            } else {
+                toast.error('Có lỗi trong quá trinh xử lý!');
+            }
+        },roomId);
         getRoomChat((rs) => {
             if (rs.statusCode === 200) {
-                console.log(rs);
                 setConversations(rs.data)
             } else {
                 toast.error(rs.message);
                 navigate('/home')
             }
-        }, roomId)
-    }, [])
+        }, roomId);
+    }, []);
 
     useEffect(() => {
         socket.on('create-new-message', (data) => {
@@ -137,6 +170,11 @@ function ChatRoomComponent() {
 
         socket.on(`mentor-in-room-chat/${roomId}`, (data) => {
             setIsMentorIn(true);
+        });
+
+        socket.on(`end-conversation-success/${userId}`, () => {
+            navigate('/home');
+            toast.success('Buổi trao đổi kết thúc!');
         });
 
         return () => {

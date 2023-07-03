@@ -1,4 +1,4 @@
-import { useState , useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import { getUserDetail } from '../../Services/UserService';
 import './layout.css'
@@ -16,6 +16,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../Constants/ApiConstant';
+import { Avatar, Box } from '@mui/material';
 
 import io from 'socket.io-client';
 
@@ -44,8 +45,10 @@ function getStyles(name, listCourses, theme) {
 
 function LayoutChildrenComponent() {
     const role = localStorage.getItem('role');
+    const username = localStorage.getItem('username');
     const userId = localStorage.getItem('userId');
     const [listCourses, setListCourse] = useState([]);
+    const [mentors, setMentors] = useState([]);
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -70,19 +73,31 @@ function LayoutChildrenComponent() {
             }
             socket.emit('post-notification', data);
         },
-    })
+    });
+
+    const handleChangeSelectCourse = (e) => {
+        formik.handleChange(e);
+        socket.emit("filter-user", { courseId: e.target.value, socketId: socket.id });
+    }
+
+    useEffect(() => {
+        socket.emit("addUser", userId);
+        socket.on('get-users-filter', (data) => {
+            console.log(data);
+            setMentors(data);
+        });
+    }, []);
 
     useEffect(() => {
         getUserDetail((rs) => {
             if (rs.statusCode === 200) {
                 setListCourse(rs.data.courses);
             }
-        },userId);
+        }, userId);
 
-        socket.on('create-room-chat',(data) => {
-            if(data.sender_id === userId) navigate(`/chat-room/${data.room_id}`);
+        socket.on('create-room-chat', (data) => {
+            if (data.sender_id === userId) navigate(`/chat-room/${data.room_id}`);
         });
-
 
         return () => {
             socket.off();
@@ -95,7 +110,7 @@ function LayoutChildrenComponent() {
             {
                 role === 'ADMIN' || role === 'MENTOR' ?
                     <LayoutOfMentorComponent /> :
-                    <Grid className='layout-children'>
+                    <Grid className='layout-children layout-mentor-main'>
                         <Grid container className='layout-children-content'>
                             <Grid className='layout-children-content-item'>
                                 <Typography align='center' variant="h3" gutterBottom className='layout-children-content-item-title'>Ask Mentor</Typography>
@@ -105,7 +120,7 @@ function LayoutChildrenComponent() {
                                         labelId="demo-multiple-name-label"
                                         id="demo-multiple-name"
                                         value={formik.values.course_id}
-                                        onChange={formik.handleChange}
+                                        onChange={(e) => handleChangeSelectCourse(e)}
                                         name='course_id'
                                         input={<OutlinedInput label="Môn Học" />}
                                         MenuProps={MenuProps}
@@ -114,7 +129,7 @@ function LayoutChildrenComponent() {
                                             <MenuItem
                                                 key={key}
                                                 value={item._id}
-                                                style={getStyles(item._id,listCourses, theme)}
+                                                style={getStyles(item._id, listCourses, theme)}
                                             >
                                                 {item.code}
                                             </MenuItem>
@@ -172,7 +187,25 @@ function LayoutChildrenComponent() {
                                 </FormControl>
                             </Grid>
 
-                            <Grid className='layout-children-content-item text-center'>
+                            <Grid className='layout-children-content-item'>
+                                {
+                                  mentors.length > 0 && <Box sx={{marginBottom: '1rem'}}>
+                                    <Typography>Mentors :</Typography>
+                                </Box>
+                                }
+                                <Box display="flex" alignItems="center">
+                                    {
+                                        mentors.length > 0 && mentors.map((item, key) => {
+                                            return <Box sx={{ paddingRight: '1rem' }} key={key}>
+                                                <Avatar alt={item.user.username} src="./assets/img/mentor.png" />
+                                                <Typography>{item.user.username}</Typography>
+                                            </Box>
+                                        })
+                                    }
+                                </Box>
+                            </Grid>
+
+                            <Grid sx={{paddingBottom: '1rem'}} className='layout-children-content-item text-center'>
                                 <Button color='error' variant='outlined' onClick={formik.handleSubmit}>
                                     Hỏi Mentor
                                 </Button>

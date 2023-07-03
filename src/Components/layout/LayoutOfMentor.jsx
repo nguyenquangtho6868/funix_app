@@ -60,7 +60,7 @@ function LayoutOfMentorComponent() {
         }, userId, "");
     }, [])
     return (
-        <Grid className='layout-children'>
+        <Grid className='layout-children layout-mentor-main'>
             <Grid container className='layout-mentor'>
                 <Grid item xs={12} sm={12} md={4} lg={4} className='layout-mentor-left'>
                     <FormControl fullWidth>
