@@ -3,12 +3,20 @@ html {
   font-size: 12px;
 }
 
-.list-group-chat::-webkit-scrollbar, .list-notification::-webkit-scrollbar {
+.list-group-chat::-webkit-scrollbar, .list-notification::-webkit-scrollbar, 
+.layout-children-content-item-textarea::-webkit-scrollbar {
   background-color: #d6dee1;
   border-radius: 20px;
   border: 6px solid transparent;
   background-clip: content-box;
   padding: 0;
+}
+
+.layout-children-content-item-textarea {
+  resize: none;
+  outline: none;
+  border: 1px solid rgba(0,0,0,0.3);
+  border-radius: 5px;
 }
 
 body {
