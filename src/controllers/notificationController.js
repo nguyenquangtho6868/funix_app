@@ -48,8 +48,12 @@ class NotificationController {
     }
 
     async getNotificationDelete(id, io) {
-        await Notification.deleteOne({ _id: id });
-        io.emit('delete-notification', id);
+        const checkNotification = await Notification.findOne({_id: id});
+        if(checkNotification) {
+            await Notification.deleteOne({ _id: id });
+            io.emit('delete-notification', id);
+        }
+        return;
     }
 }
 

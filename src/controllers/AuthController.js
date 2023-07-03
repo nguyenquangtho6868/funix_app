@@ -18,6 +18,7 @@ class AuthController {
                         username: user.username,
                         userId: user._id,
                         role: user.role,
+                        courses: user.courses,
                         statusCode: 200
                     });
                 });

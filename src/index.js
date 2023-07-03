@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 const router = require('./routes/index');
 const Notification = require('./controllers/notificationController');
 const RoomChatController = require('./controllers/RoomChatController');
+const UserModel = require('./models/user');
 const http = require('http');
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -26,37 +27,71 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.json());
 
+//List user online;
+let users = [];
+
+const addUser = async (userId,socketId) => {
+    const getUserDetail = await UserModel.findOne({_id: userId});
+    !users.some((item) => item.user._id == userId) &&
+        users.push({ user: getUserDetail, socketId });
+};
+
+const removeUser = (socketId) => {
+    users = users.filter((user) => user.socketId !== socketId);
+};
+
+const filterUser = async (courseId,socketId) => {
+    const newUsers = users.filter((obj) => obj.user.courses?.some(item => item._id === courseId) && obj.user.role !== 'STUDENT');
+    io.to(`${socketId}`).emit("get-users-filter", newUsers);
+};
+
 mongoose.connect(process.env.MONGOOSE_URL)
     .then(() => {
         console.log('Connect to MonDu successfully!');
         io.on('connection', (socket) => {
-            console.log(`Socket ${socket.id} connected`);
 
             socket.on('post-notification', (data) => {
                 Notification.addNotification(data, io);
             });
 
             socket.on('request-delete-notification', (id) => {
-                console.log('đã chạy node');
                 Notification.getNotificationDelete(id, io);
             });
 
             socket.on('mentor-support-now', (data) => {
                 RoomChatController.addRoomChat(data, io);
             });
-        
+
             socket.on('send-message', (data) => {
                 RoomChatController.sendMessage(data, io);
             });
-        
-            socket.on('disconnect', () => {
-                console.log(`Socket ${socket.id} disconnected`);
+
+            socket.on('end-conversation', (id) => {
+                io.emit(`end-conversation-success/${id}`);
+            });
+
+            //take userId and socketId from user
+            socket.on("addUser", async (userId) => {
+                await addUser(userId, socket.id);
+                io.emit("getUsers", users);
+            });
+
+            // filter User
+            socket.on("filter-user", (data) => {
+                filterUser(data.courseId,data.socketId);
+            });
+
+            //when disconnect
+            socket.on("disconnect", () => {
+                console.log("a user disconnected!");
+                removeUser(socket.id);
+                io.emit("getUsers", users);
             });
         });
     })
     .catch((err) => {
         console.log(err);
-});
+    });
 
 router(app);
 

@@ -23,6 +23,7 @@ function route(app) {
     // app.delete('/edit-course',AuthMiddleware.authLoginNoRole,CourseController.editUser);
 
     // Chat room
+    app.post('/get-room-chat',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomChat);
     app.post('/get-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomChatDetail);
     app.post('/end-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.endRoomChatDetail);
 
