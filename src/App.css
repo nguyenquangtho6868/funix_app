@@ -4,7 +4,9 @@ html {
 }
 
 .list-group-chat::-webkit-scrollbar, .list-notification::-webkit-scrollbar, 
-.layout-children-content-item-textarea::-webkit-scrollbar {
+.layout-children-content-item-textarea::-webkit-scrollbar,
+.chat-content::-webkit-scrollbar
+{
   background-color: #d6dee1;
   border-radius: 20px;
   border: 6px solid transparent;
