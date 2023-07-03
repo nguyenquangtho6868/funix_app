@@ -2,6 +2,15 @@ html {
   height: 100%;
   font-size: 12px;
 }
+
+.list-group-chat::-webkit-scrollbar, .list-notification::-webkit-scrollbar {
+  background-color: #d6dee1;
+  border-radius: 20px;
+  border: 6px solid transparent;
+  background-clip: content-box;
+  padding: 0;
+}
+
 body {
   margin: 0;
   padding: 0;
