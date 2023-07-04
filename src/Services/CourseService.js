@@ -13,7 +13,7 @@ export function getCourses(callback) {
       .then(callback);
 }
 
-export function getCourseDetail(callback,id) {
+export function getCourseDetail(callback,data) {
     const token = localStorage.getItem('token');
     fetch(`${API_URL}/get-list-course-detail`, {
         method: 'POST',
@@ -21,7 +21,7 @@ export function getCourseDetail(callback,id) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({id})
+        body: JSON.stringify(data)
     })
       .then(res => res.json())
       .then(callback);

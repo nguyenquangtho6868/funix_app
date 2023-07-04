@@ -47,7 +47,7 @@ function LayoutMentorChildComponent() {
         }, id);
         getCourseDetail((rs) => {
             setCourseDetail(...rs.data)
-        }, id)
+        }, {course_id: id,userId})
     }, [id])
 
     useEffect(() => {

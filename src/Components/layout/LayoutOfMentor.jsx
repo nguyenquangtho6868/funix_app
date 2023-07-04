@@ -39,7 +39,7 @@ function LayoutOfMentorComponent() {
         let course_id = event.target.value._id
         getCourseDetail((rs) => {
             setListCourseChat(rs.data);
-        }, course_id)
+        }, {course_id, userId})
     };
 
     const moveToGroupChat = (id) => {
