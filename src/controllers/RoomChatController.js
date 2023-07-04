@@ -17,13 +17,28 @@ class RoomChatController {
     }
 
     async sendMessage(data, io) {
+        const convertTime12to24 = (time12h) => {
+            const [time, modifier] = time12h.split(' ');
+          
+            let [hours, minutes] = time.split(':');
+          
+            if (hours === '12') {
+              hours = '00';
+            }
+          
+            if (modifier === 'PM') {
+              hours = parseInt(hours, 10) + 12;
+            }
+          
+            return `${hours}:${minutes}`;
+        }
         const date = new Date(Date.now());
         const createdAtDay = date.toLocaleDateString([], { timeZone: "Asia/Saigon" })
-        const createdAtTime = date.toLocaleTimeString([], {
+        const createdAtTime = convertTime12to24(date.toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
             timeZone: "Asia/Saigon",
-        });
+        }));
         const distanceTimeMessage = Number(createdAtTime.slice(3)) - Number(data.prev_message.createdAtTime.slice(3));
         if (data.sender === data.prev_message.sender._id && distanceTimeMessage <= 5) {
             await MessageModel.updateOne({ _id: data.prev_message._id }, {
