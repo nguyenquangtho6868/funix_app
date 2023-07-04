@@ -223,12 +223,12 @@ function ChatRoomComponent() {
                                                 <Grid className={obj.sender._id === userId ? 'text-end-justify' : ''}>
                                                     <Avatar
                                                         className={obj.sender.role === 'MENTOR' || obj.sender.role === 'ADMIN' ? 'display-none' : ''}
-                                                        sx={{ height: '12px', width: '12px' }}
+                                                        sx={{ height: '24px', width: '24px' }}
                                                         src={require('../../assets/img/logo-funix.png')}
                                                     />
                                                     <Avatar
                                                         className={obj.sender.role === 'STUDENT' ? 'display-none' : ''}
-                                                        sx={{ height: '12px', width: '12px' }}
+                                                        sx={{ height: '24px', width: '24px' }}
                                                         src={require('../../assets/img/mentor.png')}
                                                     />
                                                 </Grid>
