@@ -1,15 +1,22 @@
 import React, { createContext, useEffect, useState } from 'react'
 import { ColorRing } from 'react-loader-spinner';
 import { useNavigate } from 'react-router-dom';
+import { getRoomCheckUserId } from '../Services/RoomChatService';
 
 export const AuthContext = createContext();
 function AuthLoginProvider({children}) {
 
     const navigate = useNavigate();
+    const userId  = localStorage.getItem('userId');
     const [isLoading, setIsLoading] = useState(false);
     const [isOutlet, setIsOutlet] = useState(false);
 
     useEffect(() => {
+      getRoomCheckUserId((res) => {
+        if(res.data) {
+          navigate(`/chat-room/${res.data._id}`)
+        }
+      }, userId);
         
       return () => {
         
