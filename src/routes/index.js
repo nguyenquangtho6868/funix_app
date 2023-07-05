@@ -26,6 +26,7 @@ function route(app) {
     app.post('/get-room-chat',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomChat);
     app.post('/get-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomChatDetail);
     app.post('/end-room-chat-detail',AuthMiddleware.authLoginNoRole,RoomChatController.endRoomChatDetail);
+    app.post('/get-room-chat-check-user-id',AuthMiddleware.authLoginNoRole,RoomChatController.getRoomCheckUserId);
 
     // Notification 
     app.post('/get-list-notification',AuthMiddleware.authLoginNoRole,NotificationController.getNotificationDetail);

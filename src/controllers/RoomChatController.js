@@ -92,6 +92,21 @@ class RoomChatController {
         }
     }
 
+    async getRoomCheckUserId(req, res) {
+        try {
+            const { userId } = req.body;
+            if (!userId) {
+                return res.status(422).json({ message: 'Have no ID!', statusCode: 500 });
+            }
+            const getRoom = await RoomChatModel.findOne({ users: {$elemMatch: {$eq: userId}}, is_history: false });
+            res.json({ message: 'Successfully!', data: getRoom, statusCode: 200 });
+        }
+        catch (e) {
+            res.status(422).json(e);
+        }
+    }
+
+
     async endRoomChatDetail(req, res) {
         try {
             const { id } = req.body;
