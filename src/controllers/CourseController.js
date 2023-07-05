@@ -1,5 +1,6 @@
 
 const CourseModal = require('../models/course');
+const UserModal = require('../models/user');
 
 class CourseController {
     async addCourse(req, res) {
@@ -27,14 +28,14 @@ class CourseController {
     }
 
     async getListCourseDetail(req, res) {
-        try {
-            const { id } = req.body;
-            if (id) {
-                const course = await CourseModal.find({ _id: id });
+        try {   
+            const { course_id,userId } = req.body;
+            if (course_id) {
+                const course = await CourseModal.find({ _id: course_id });
                 return res.json({ message: 'Get Course Successfully!', data: course, statusCode: 200 });
             } else {
-                const courses = await CourseModal.find({});
-                return res.json({ message: 'Get Courses Successfully!', data: courses, statusCode: 200 });
+                const data = await UserModal.findOne({_id: userId});
+                return res.json({ message: 'Get Courses Successfully!', data: data.courses, statusCode: 200 });
             }
         }
         catch (e) {
