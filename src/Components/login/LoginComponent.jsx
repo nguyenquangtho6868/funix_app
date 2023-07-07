@@ -9,6 +9,7 @@ import './login.css';
 import Grid from '@mui/material/Grid';
 import { loginPage } from "../../Services/LoginService";
 import { AuthContext } from "../../Context/AuthLogin";
+import { Howl } from 'howler';
 
 
 function LoginComponent() {
@@ -40,6 +41,10 @@ function LoginComponent() {
           setTimeout(() => {
             navigate('/home');
             setIsLoading(false);
+            const sound = new Howl({
+              src: [require('../../assets/sounds/sound-login.mp3')] // Đường dẫn đến file âm thanh
+            });
+            sound.play();
           }, 300);
           localStorage.setItem('token', res.token);
           localStorage.setItem('userId', res.userId);

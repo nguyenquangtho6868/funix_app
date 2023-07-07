@@ -13,7 +13,7 @@ import { API_URL } from '../../Constants/ApiConstant';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
 import io from 'socket.io-client';
-
+import { Howl } from 'howler';
 const socket = io(API_URL);
 
 const userId = localStorage.getItem('userId');
@@ -37,7 +37,7 @@ function ChatRoomComponent() {
         getRoomChatWithId((rs) => {
             if (rs.statusCode === 200) {
                 const getUser = rs.data.users.filter(item => item !== userId);
-                if(getUser) {
+                if (getUser) {
                     endRoomChat((rs) => {
                         if (rs.statusCode === 200) {
                             socket.emit('end-conversation', getUser[0]);
@@ -68,6 +68,15 @@ function ChatRoomComponent() {
         }, roomId);
     }
 
+    const handleSendMessage = (data) => {
+        socket.emit('send-message', data);
+        setValueMessage('');
+        const sound = new Howl({
+            src: [require('../../assets/sounds/send.mp3')] // Đường dẫn đến file âm thanh
+        });
+        sound.play();
+    }
+
     const sendMessage = () => {
         let data = {
             sender: userId,
@@ -76,8 +85,7 @@ function ChatRoomComponent() {
             prev_message: conversations[conversations.length - 1]
         }
         if (valueMessage !== '') {
-            socket.emit('send-message', data);
-            setValueMessage('');
+            handleSendMessage(data);
         }
     }
 
@@ -89,8 +97,7 @@ function ChatRoomComponent() {
             prev_message: conversations[conversations.length - 1]
         }
         if (valueMessage !== '' && e.key === 'Enter') {
-            socket.emit('send-message', data);
-            setValueMessage('');
+            handleSendMessage(data);
         }
     }
 
@@ -139,16 +146,16 @@ function ChatRoomComponent() {
 
     useEffect(() => {
         getRoomChatWithId((rs) => {
-            if(rs.statusCode === 200) {
+            if (rs.statusCode === 200) {
                 const checkUser = rs.data.users.some(item => item === userId);
-                if(!checkUser) {
+                if (!checkUser) {
                     toast.error('Bạn không có quyền truy cập!');
                     navigate('/home');
                 }
             } else {
                 toast.error('Có lỗi trong quá trinh xử lý!');
             }
-        },roomId);
+        }, roomId);
         getRoomChat((rs) => {
             if (rs.statusCode === 200) {
                 setConversations(rs.data)
@@ -162,6 +169,12 @@ function ChatRoomComponent() {
     useEffect(() => {
         socket.on('create-new-message', (data) => {
             setConversations(prev => [...prev, ...data]);
+            if (data[0].sender._id !== userId) {
+                const sound = new Howl({
+                    src: [require('../../assets/sounds/recive.mp3')] // Đường dẫn đến file âm thanh
+                });
+                sound.play();
+            }
         });
 
         socket.on('update-message', (data) => {
@@ -240,7 +253,10 @@ function ChatRoomComponent() {
                                                                 className={obj.sender._id === userId ? 'messages-item justify-end' : 'messages-item'}
                                                             >
                                                                 <Typography
-                                                                    className={obj.sender._id === userId ? 'messages-item-text middle-message messages-item-text-sender' : 'messages-item-text middle-message messages-item-text-receiver'}
+                                                                    className={obj.sender._id === userId ?
+                                                                        'messages-item-text middle-message messages-item-text-sender' :
+                                                                        'messages-item-text middle-message messages-item-text-receiver'
+                                                                    }
                                                                     // className={key === 0 && obj.message.length > 2 ?
                                                                     //     'messages-item-text first-message' :
                                                                     //     `${key === obj.message.length - 1 && obj.message.length > 2 ?
@@ -257,7 +273,10 @@ function ChatRoomComponent() {
                                                 </List>
                                             </Grid>
                                         </ListItem>
-                                        <Grid className={conversations.length - 1 === key ? 'text-center-justify chat-time-distance display-none' : 'text-center-justify chat-time-distance'}>
+                                        <Grid
+                                            className={conversations.length - 1 === key ?
+                                                'text-center-justify chat-time-distance display-none'
+                                                : 'text-center-justify chat-time-distance'}>
                                             {obj.createdAtTime}
                                         </Grid>
                                     </Grid>
