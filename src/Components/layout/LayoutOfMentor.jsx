@@ -7,13 +7,17 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
-import { List, ListItem } from '@mui/material';
+import { Box, List, ListItem } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import { AuthContext } from '../../Context/AuthLogin';
 import Typography from '@mui/material/Typography';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { getUserDetail } from '../../Services/UserService';
+import { Howl } from 'howler';
+import { API_URL } from '../../Constants/ApiConstant';
+import io from 'socket.io-client';
 
+const socket = io(API_URL);
 
 function getStyles(name, listCourses, theme) {
     return {
@@ -58,12 +62,23 @@ function LayoutOfMentorComponent() {
                 setListCourseChat(rs.data.courses);
             }
         }, userId, "");
+
+        socket.on(`get-create-notification-all`, (data) => {
+            const sound = new Howl({
+                src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
+            });
+            sound.play();
+        });
+
+        return () => {
+            socket.off();
+        };
     }, [])
     return (
         <Grid className='layout-children layout-mentor-main'>
             <Grid container className='layout-mentor'>
                 <Grid item xs={12} sm={12} md={4} lg={4} className='layout-mentor-left'>
-                    <FormControl fullWidth>
+                    <FormControl sx={{width: '98%'}}>
                         <InputLabel id="demo-simple-select-helper-label">Courses</InputLabel>
                         <Select
                             labelId="demo-simple-select-helper-label"
@@ -91,7 +106,7 @@ function LayoutOfMentorComponent() {
                         <List>
                             {listCourseChat.length > 0 && listCourseChat.map((obj, key) => {
                                 return (
-                                    <ListItem button key={key} onClick={() => moveToGroupChat(obj._id)}>
+                                    <ListItem sx={{position: 'relative'}} button key={key} onClick={() => moveToGroupChat(obj._id)}>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3}>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
@@ -121,6 +136,19 @@ function LayoutOfMentorComponent() {
                                                 </FormControl>
                                             </Grid>
                                         </Grid>
+                                        <Box 
+                                            sx={{
+                                                position: 'absolute', 
+                                                top: '35%',
+                                                right: '6%',
+                                                borderRadius: '50%',
+                                                padding: '5px 5px',
+                                                backgroundColor: '#3da2e7',
+                                                fontWeight: '600',
+                                                display: 'flex',
+                                                justifyContent: 'center'
+                                            }}
+                                        ></Box>
                                     </ListItem>
                                 )
                             })}
@@ -130,7 +158,7 @@ function LayoutOfMentorComponent() {
                         <List>
                             {listCourseChat.length > 0 && listCourseChat.map((obj, key) => {
                                 return (
-                                    <ListItem button key={key} onClick={() => moveToGroupChatMobile(obj._id)} className='list-group-chat-item'>
+                                    <ListItem sx={{position: 'relative'}} button key={key} onClick={() => moveToGroupChatMobile(obj._id)} className='list-group-chat-item'>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3} sm={2} className='text-center-justify'>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
@@ -160,6 +188,19 @@ function LayoutOfMentorComponent() {
                                                 </Grid>
                                             </Grid>
                                         </Grid>
+                                        <Box 
+                                            sx={{
+                                                position: 'absolute', 
+                                                top: '35%',
+                                                right: '6%',
+                                                borderRadius: '50%',
+                                                padding: '5px 5px',
+                                                backgroundColor: '#3da2e7',
+                                                fontWeight: '600',
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                            }}
+                                        > 10+ </Box>
                                     </ListItem>
                                 )
                             })}

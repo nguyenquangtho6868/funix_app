@@ -109,9 +109,9 @@ body {
   }
 }
 
-@media (width: 912px) {
+@media (max-width: 912px) {
   .layout-mentor-child-header {
-    height: 4vh;
+    height: 6.5vh !important;
   }
 }
 

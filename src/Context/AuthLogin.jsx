@@ -12,11 +12,13 @@ function AuthLoginProvider({children}) {
     const [isOutlet, setIsOutlet] = useState(false);
 
     useEffect(() => {
-      getRoomCheckUserId((res) => {
-        if(res.data) {
-          navigate(`/chat-room/${res.data._id}`)
-        }
-      }, userId);
+      if(userId) {
+        getRoomCheckUserId((res) => {
+          if(res.data) {
+            navigate(`/chat-room/${res.data._id}`)
+          }
+        }, userId);
+      }
         
       return () => {
         

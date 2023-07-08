@@ -83,7 +83,6 @@ function LayoutChildrenComponent() {
     useEffect(() => {
         socket.emit("addUser", userId);
         socket.on('get-users-filter', (data) => {
-            console.log(data);
             setMentors(data);
         });
     }, []);

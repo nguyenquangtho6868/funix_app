@@ -8,7 +8,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import './chatRoom.css';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getRoomChat, endRoomChat, getRoomChatWithId } from '../../Services/RoomChatService';
+import { getRoomChat, endRoomChat, getRoomChatWithId, getRoomCheckUserId } from '../../Services/RoomChatService';
 import { API_URL } from '../../Constants/ApiConstant';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
@@ -115,7 +115,6 @@ function ChatRoomComponent() {
         list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
     }
 
-
     useEffect(() => {
         const getMinutes = Number(localStorage.getItem('minutes'));
         const getSeconds = Number(localStorage.getItem('seconds'));
@@ -129,7 +128,6 @@ function ChatRoomComponent() {
                         return prev + 1;
                     });
                     setSeconds(-1);
-
                 }
 
                 if (seconds >= 0) {
@@ -145,25 +143,21 @@ function ChatRoomComponent() {
     }, [minutes, seconds, isMentorIn]);
 
     useEffect(() => {
-        getRoomChatWithId((rs) => {
-            if (rs.statusCode === 200) {
-                const checkUser = rs.data.users.some(item => item === userId);
-                if (!checkUser) {
-                    toast.error('Bạn không có quyền truy cập!');
-                    navigate('/home');
-                }
+        getRoomCheckUserId((res) => {
+            if(!res.data) {
+                toast.error('Bạn không có quyền truy cập!');
+                navigate('/home');
             } else {
-                toast.error('Có lỗi trong quá trinh xử lý!');
+                getRoomChat((rs) => {
+                    if (rs.statusCode === 200) {
+                        setConversations(rs.data)
+                    } else {
+                        toast.error(rs.message);
+                        navigate('/home');
+                    }
+                }, roomId);
             }
-        }, roomId);
-        getRoomChat((rs) => {
-            if (rs.statusCode === 200) {
-                setConversations(rs.data)
-            } else {
-                toast.error(rs.message);
-                navigate('/home')
-            }
-        }, roomId);
+        }, userId);
     }, []);
 
     useEffect(() => {
@@ -190,6 +184,11 @@ function ChatRoomComponent() {
             toast.success('Buổi trao đổi kết thúc!');
         });
 
+        socket.on(`exit-room-cause-no-mentor/${userId}`, () => {
+            navigate('/home');
+            toast.warning('Rất xin lỗi vì hiện các Mentor đang bận!');
+        });
+
         return () => {
             socket.off();
         }
@@ -210,6 +209,7 @@ function ChatRoomComponent() {
     const formatTime = (time) => {
         return time < 10 ? `0${time}` : time;
     };
+
     return (
         <Grid container className='layout-children-grid'>
             <Grid item xs={12} className='layout-children-right chat-room'>

@@ -13,13 +13,13 @@ import { getlistNotification } from '../../Services/NotificationService';
 import { toast } from 'react-toastify';
 import { API_URL } from '../../Constants/ApiConstant';
 import io from 'socket.io-client';
+import { Howl } from 'howler';
 
 const socket = io(API_URL);
 
 
 function LayoutMentorChildComponent() {
 
-    const countdown = 60000;
     const list = useRef(null);
     const { id } = useParams();
     const userId = localStorage.getItem('userId');
@@ -69,9 +69,10 @@ function LayoutMentorChildComponent() {
         list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
         socket.on(`get-create-notification/${id}`, (data) => {
             setNotifications(prev => [...prev, data]);
-            setTimeout(() => {
-                socket.emit('request-delete-notification', data._id);
-            }, countdown)
+            const sound = new Howl({
+                src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
+              });
+            sound.play();
         });
 
         socket.on('delete-notification', (id) => {
