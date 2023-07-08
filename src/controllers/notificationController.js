@@ -4,6 +4,7 @@ const MessageModel = require('../models/message');
 
 class NotificationController {
     async addNotification(data, io) {
+        const countdown = 5000;
         const { question, user_id, description, course_id } = data;
         const date = new Date(Date.now());
         const createdAtDay = date.toLocaleDateString([], { timeZone: "Asia/Saigon" })
@@ -31,9 +32,19 @@ class NotificationController {
             file: {},
             createdAt: createdAtDay + '-' + createdAtTime
         });
-
         io.emit(`get-create-notification/${course_id}`, newNotification);
+        io.emit(`get-create-notification-all`, newNotification);
         io.emit('create-room-chat', { room_id: room._id, sender_id: user_id });
+        setTimeout(async () => {
+            const checkNotification = await Notification.findOne({ _id: newNotification._id });
+            if (checkNotification) {
+                await Notification.deleteOne({ _id: newNotification._id });
+                await RoomChatModel.updateOne({ _id: room._id }, { is_history: true });
+                io.emit('delete-notification', newNotification._id);
+                io.emit(`exit-room-cause-no-mentor/${user_id}`);
+            }
+            return;
+        }, countdown);
     }
 
     async getNotificationDetail(req, res) {
@@ -48,8 +59,8 @@ class NotificationController {
     }
 
     async getNotificationDelete(id, io) {
-        const checkNotification = await Notification.findOne({_id: id});
-        if(checkNotification) {
+        const checkNotification = await Notification.findOne({ _id: id });
+        if (checkNotification) {
             await Notification.deleteOne({ _id: id });
             io.emit('delete-notification', id);
         }

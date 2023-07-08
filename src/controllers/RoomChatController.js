@@ -85,7 +85,11 @@ class RoomChatController {
                 return res.status(422).json({ message: 'Have no ID!', statusCode: 500 });
             }
             const getRoom = await RoomChatModel.findOne({ _id: id, is_history: false });
-            res.json({ message: 'Get room chat Successfully!', data: getRoom, statusCode: 200 });
+            if(getRoom) {
+                res.json({ message: 'Get room chat Successfully!', data: getRoom, statusCode: 200 });
+            } else {
+                res.json({ message: 'Get room chat Failed!', data: getRoom, statusCode: 500 });
+            }
         }
         catch (e) {
             res.status(422).json(e);
