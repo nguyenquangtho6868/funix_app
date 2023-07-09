@@ -62,7 +62,7 @@ function LayoutChildrenComponent() {
             description: Yup.string().required('Trường này không được bỏ trống!'),
             course_id: Yup.string().required('Bạn chưa chọn môn học!'),
         }),
-        onSubmit: (values, { setSubmitting }) => {
+        onSubmit: (values, { resetForm,setSubmitting }) => {
             setSubmitting(true);
             let data = {
                 question: values.question,
@@ -70,6 +70,7 @@ function LayoutChildrenComponent() {
                 course_id: values.course_id,
                 user_id: userId
             }
+            resetForm();
             socket.emit('post-notification', data);
         },
     });

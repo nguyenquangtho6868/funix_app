@@ -28,7 +28,7 @@ function LayoutMentorChildComponent() {
     const [courseDetail, setCourseDetail] = useState([]);
 
     const backView = () => {
-        navigate('/home')
+        navigate('/home');
     }
 
     const supportNow = (obj) => {
@@ -43,21 +43,21 @@ function LayoutMentorChildComponent() {
 
     useEffect(() => {
         getlistNotification((rs) => {
-            setNotifications(rs.data)
+            setNotifications(rs.data);
         }, id);
         getCourseDetail((rs) => {
-            setCourseDetail(...rs.data)
+            setCourseDetail(...rs.data);
         }, {course_id: id,userId})
-    }, [id])
+    }, [id]);
 
     useEffect(() => {
 
         socket.on('quantity-room-chat-full', () => {
-            toast.warning('Phòng này đã có Mentor hỗ trợ!')
+            toast.warning('Phòng này đã có Mentor hỗ trợ!');
         });
 
         socket.on(`join-room-chat-success/${userId}`, (data) => {
-            navigate(`/chat-room/${data.roomId}`)
+            navigate(`/chat-room/${data.roomId}`);
         });
 
         return () => {
@@ -78,7 +78,7 @@ function LayoutMentorChildComponent() {
         socket.on('delete-notification', (id) => {
             setNotifications(prev => prev.filter(obj => obj._id !== id));
         });
-    }, [notifications])
+    }, [notifications]);
 
     return (
         <Grid className='layout-children'>
