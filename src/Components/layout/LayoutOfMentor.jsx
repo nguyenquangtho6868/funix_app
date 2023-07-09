@@ -46,9 +46,10 @@ function LayoutOfMentorComponent() {
         }, {course_id, userId})
     };
 
-    const moveToGroupChat = (id) => {
+    const moveToGroupChat = (obj) => {
         setIsOutlet(true);
-        navigate(`/home/group-chat-mentor/${id}`)
+        navigate(`/home/group-chat-mentor/${obj._id}`);
+        if(obj.new_notification) socket.emit('change-new-notification', {courseId: obj._id,userId,socketId: socket.id});
     };
 
     const moveToGroupChatMobile = (id) => {
@@ -68,6 +69,16 @@ function LayoutOfMentorComponent() {
                 src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
             });
             sound.play();
+            getUserDetail((rs) => {
+                if (rs.statusCode === 200) {
+                    setListCourseChat(rs.data.courses);
+                }
+            }, userId, "");
+        });
+
+        socket.on(`change-new-notification-success/${userId}`, (data) => {
+            console.log(data);
+            setListCourseChat(data.courses);
         });
 
         return () => {
@@ -106,7 +117,7 @@ function LayoutOfMentorComponent() {
                         <List>
                             {listCourseChat.length > 0 && listCourseChat.map((obj, key) => {
                                 return (
-                                    <ListItem sx={{position: 'relative'}} button key={key} onClick={() => moveToGroupChat(obj._id)}>
+                                    <ListItem sx={{position: 'relative'}} button key={key} onClick={() => moveToGroupChat(obj)}>
                                         <Grid container rowSpacing={4}>
                                             <Grid item xs={3}>
                                                 <Avatar alt="Remy Sharp" src={require('../../assets/img/logo-funix.png')} />
@@ -136,7 +147,9 @@ function LayoutOfMentorComponent() {
                                                 </FormControl>
                                             </Grid>
                                         </Grid>
-                                        <Box 
+                                        {
+                                            obj.new_notification && 
+                                            <Box 
                                             sx={{
                                                 position: 'absolute', 
                                                 top: '35%',
@@ -146,9 +159,10 @@ function LayoutOfMentorComponent() {
                                                 backgroundColor: '#3da2e7',
                                                 fontWeight: '600',
                                                 display: 'flex',
-                                                justifyContent: 'center'
+                                                justifyContent: 'center',
                                             }}
-                                        ></Box>
+                                            ></Box>
+                                        }
                                     </ListItem>
                                 )
                             })}
@@ -188,7 +202,9 @@ function LayoutOfMentorComponent() {
                                                 </Grid>
                                             </Grid>
                                         </Grid>
-                                        <Box 
+                                        {
+                                            obj.new_notification && 
+                                            <Box 
                                             sx={{
                                                 position: 'absolute', 
                                                 top: '35%',
@@ -200,7 +216,8 @@ function LayoutOfMentorComponent() {
                                                 display: 'flex',
                                                 justifyContent: 'center',
                                             }}
-                                        > 10+ </Box>
+                                            ></Box>
+                                        }
                                     </ListItem>
                                 )
                             })}

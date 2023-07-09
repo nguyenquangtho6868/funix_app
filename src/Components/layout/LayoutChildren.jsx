@@ -45,7 +45,6 @@ function getStyles(name, listCourses, theme) {
 
 function LayoutChildrenComponent() {
     const role = localStorage.getItem('role');
-    const username = localStorage.getItem('username');
     const userId = localStorage.getItem('userId');
     const [listCourses, setListCourse] = useState([]);
     const [mentors, setMentors] = useState([]);
@@ -94,8 +93,8 @@ function LayoutChildrenComponent() {
             }
         }, userId);
 
-        socket.on('create-room-chat', (data) => {
-            if (data.sender_id === userId) navigate(`/chat-room/${data.room_id}`);
+        socket.on(`create-room-chat/${userId}`, (data) => {
+            navigate(`/chat-room/${data.room_id}`);
         });
 
         return () => {
@@ -205,7 +204,7 @@ function LayoutChildrenComponent() {
                             </Grid>
 
                             <Grid sx={{paddingBottom: '1rem'}} className='layout-children-content-item text-center'>
-                                <Button color='error' variant='outlined' onClick={formik.handleSubmit}>
+                                <Button disabled={formik.isSubmitting} color='error' variant='outlined' onClick={formik.handleSubmit}>
                                     Hỏi Mentor
                                 </Button>
                             </Grid>
