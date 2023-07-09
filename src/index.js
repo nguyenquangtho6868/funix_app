@@ -58,6 +58,10 @@ mongoose.connect(process.env.MONGOOSE_URL)
                 Notification.getNotificationDelete(id, io);
             });
 
+            socket.on('change-new-notification', (data) => {
+                Notification.changeNewNotification(data, io);
+            });
+
             socket.on('mentor-support-now', (data) => {
                 RoomChatController.addRoomChat(data, io);
             });

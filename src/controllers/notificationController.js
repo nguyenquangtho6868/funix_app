@@ -1,10 +1,11 @@
 const Notification = require('../models/notification');
 const RoomChatModel = require('../models/roomChat');
 const MessageModel = require('../models/message');
+const UserModel = require('../models/user');
 
 class NotificationController {
     async addNotification(data, io) {
-        const countdown = 5000;
+        const countdown = 60000;
         const { question, user_id, description, course_id } = data;
         const date = new Date(Date.now());
         const createdAtDay = date.toLocaleDateString([], { timeZone: "Asia/Saigon" })
@@ -32,12 +33,16 @@ class NotificationController {
             file: {},
             createdAt: createdAtDay + '-' + createdAtTime
         });
+        await UserModel.updateMany(
+            {role: {$in: ['MENTOR','ADMIN']}, "courses._id": `${course_id}`},
+            {$set: {"courses.$.new_notification": true}}
+        );
         io.emit(`get-create-notification/${course_id}`, newNotification);
         io.emit(`get-create-notification-all`, newNotification);
-        io.emit('create-room-chat', { room_id: room._id, sender_id: user_id });
+        io.emit(`create-room-chat/${user_id}`, { room_id: room._id, sender_id: user_id });
         setTimeout(async () => {
             const checkNotification = await Notification.findOne({ _id: newNotification._id });
-            if (checkNotification) {
+                if (checkNotification) {
                 await Notification.deleteOne({ _id: newNotification._id });
                 await RoomChatModel.updateOne({ _id: room._id }, { is_history: true });
                 io.emit('delete-notification', newNotification._id);
@@ -65,6 +70,15 @@ class NotificationController {
             io.emit('delete-notification', id);
         }
         return;
+    }
+
+    async changeNewNotification(data, io) {
+        await UserModel.updateOne(
+            {_id: data.userId, "courses._id": `${data.courseId}`},
+            {$set: {"courses.$.new_notification": false}}
+        );
+        const getUserModify = await UserModel.findOne({_id: data.userId});
+        if(getUserModify) io.emit(`change-new-notification-success/${data.userId}`, getUserModify);
     }
 }
 
