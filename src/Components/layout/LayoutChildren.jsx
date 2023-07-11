@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import { getUserDetail } from '../../Services/UserService';
 import './layout.css'
@@ -48,6 +48,7 @@ function LayoutChildrenComponent() {
     const userId = localStorage.getItem('userId');
     const [listCourses, setListCourse] = useState([]);
     const [mentors, setMentors] = useState([]);
+    const [isSelect, setIsSelect] = useState(false);
     const theme = useTheme();
     const navigate = useNavigate();
 
@@ -62,7 +63,7 @@ function LayoutChildrenComponent() {
             description: Yup.string().required('Trường này không được bỏ trống!'),
             course_id: Yup.string().required('Bạn chưa chọn môn học!'),
         }),
-        onSubmit: (values, { resetForm,setSubmitting }) => {
+        onSubmit: (values, { resetForm, setSubmitting }) => {
             setSubmitting(true);
             let data = {
                 question: values.question,
@@ -71,126 +72,145 @@ function LayoutChildrenComponent() {
                 user_id: userId
             }
             resetForm();
-            socket.emit('post-notification', data);
+            socket.emit('post-notification', { data, mentors });
         },
     });
 
     const handleChangeSelectCourse = (e) => {
+        setIsSelect(true);
         formik.handleChange(e);
-        socket.emit("filter-user", { courseId: e.target.value, socketId: socket.id });
+        socket.emit('filter-mentor',{userId, courseId: e.target.value});
+        localStorage.setItem('courseId', e.target.value);
     }
 
     useEffect(() => {
         socket.emit("addUser", userId);
-        socket.on('get-users-filter', (data) => {
-            setMentors(data);
-        });
-    }, []);
 
-    useEffect(() => {
-        getUserDetail((rs) => {
-            if (rs.statusCode === 200) {
-                setListCourse(rs.data.courses);
-            }
-        }, userId);
+        if(role === 'STUDENT') {
+            socket.on('getUsers', (data) => {
+                const courseId = localStorage.getItem('courseId');
+                let filter = [];
+                courseId == null?
+                filter = data.filter(obj => obj.user.role !== 'STUDENT') :
+                filter = data.filter(obj => obj.user.role !== 'STUDENT' && obj.user.courses?.some(item => item._id === courseId));
+                setMentors(filter);
+            });
+
+            socket.on(`get-users-filter/${userId}`, (data) => {
+                console.log(data);
+                setMentors(data);
+            });
+        }
 
         socket.on(`create-room-chat/${userId}`, (data) => {
             navigate(`/chat-room/${data.room_id}`);
         });
 
         return () => {
+            localStorage.removeItem('courseId');
             socket.off();
         };
+    }, []);
+
+    useEffect(() => {
+        getUserDetail((rs) => {
+            if (rs.statusCode === 200 && rs.data) {
+                setListCourse(rs.data.courses);
+            }
+        }, userId);
     }, [])
 
 
     return (
         <>
             {
-                role === 'ADMIN' || role === 'MENTOR' ?
-                    <LayoutOfMentorComponent /> :
-                    <Grid className='layout-children layout-mentor-main'>
-                        <Grid container className='layout-children-content'>
-                            <Grid className='layout-children-content-item'>
-                                <Typography align='center' variant="h3" gutterBottom className='layout-children-content-item-title'>Ask Mentor</Typography>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-multiple-name-label">Môn Học</InputLabel>
-                                    <Select
-                                        labelId="demo-multiple-name-label"
-                                        id="demo-multiple-name"
-                                        value={formik.values.course_id}
-                                        onChange={(e) => handleChangeSelectCourse(e)}
-                                        name='course_id'
-                                        input={<OutlinedInput label="Môn Học" />}
-                                        MenuProps={MenuProps}
+                (role === 'ADMIN' || role === 'MENTOR') && <LayoutOfMentorComponent /> 
+            }
+            {
+                role === 'STUDENT' && <Grid className='layout-children layout-mentor-main'>
+                <Grid container className='layout-children-content'>
+                    <Grid className='layout-children-content-item'>
+                        <Typography align='center' variant="h3" gutterBottom className='layout-children-content-item-title'>Ask Mentor</Typography>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-multiple-name-label">Môn Học</InputLabel>
+                            <Select
+                                labelId="demo-multiple-name-label"
+                                id="demo-multiple-name"
+                                value={formik.values.course_id}
+                                onChange={(e) => handleChangeSelectCourse(e)}
+                                name='course_id'
+                                input={<OutlinedInput label="Môn Học" />}
+                                MenuProps={MenuProps}
+                            >
+                                {listCourses.map((item, key) => (
+                                    <MenuItem
+                                        key={key}
+                                        value={item._id}
+                                        style={getStyles(item._id, listCourses, theme)}
                                     >
-                                        {listCourses.map((item, key) => (
-                                            <MenuItem
-                                                key={key}
-                                                value={item._id}
-                                                style={getStyles(item._id, listCourses, theme)}
-                                            >
-                                                {item.code}
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                                {formik.errors.course_id && formik.touched.course_id && (<div className="form-error mt-2">{formik.errors.course_id}</div>)}
+                                        {item.code}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        {formik.errors.course_id && formik.touched.course_id && (<div className="form-error mt-2">{formik.errors.course_id}</div>)}
 
-                            </Grid>
+                    </Grid>
 
-                            <Grid className='layout-children-content-item'>
-                                <FormControl fullWidth>
-                                    <Typography variant="h6" gutterBottom>Câu hỏi (*)</Typography>
-                                    <TextareaAutosize
-                                        className='layout-children-content-item-textarea'
-                                        value={formik.values.question}
-                                        name='question'
-                                        onChange={formik.handleChange}
-                                    ></TextareaAutosize>
-                                </FormControl>
-                                {formik.errors.question && formik.touched.question && (<div className="form-error mt-2">{formik.errors.question}</div>)}
+                    <Grid className='layout-children-content-item'>
+                        <FormControl fullWidth>
+                            <Typography variant="h6" gutterBottom>Câu hỏi (*)</Typography>
+                            <TextareaAutosize
+                                className='layout-children-content-item-textarea'
+                                value={formik.values.question}
+                                name='question'
+                                onChange={formik.handleChange}
+                            ></TextareaAutosize>
+                        </FormControl>
+                        {formik.errors.question && formik.touched.question && (<div className="form-error mt-2">{formik.errors.question}</div>)}
 
-                            </Grid>
+                    </Grid>
 
-                            <Grid className='layout-children-content-item'>
-                                <FormControl fullWidth>
-                                    <Typography
-                                        variant="h6"
-                                        gutterBottom
-                                    >
-                                        Bạn đã thử cách gì để tìm kiếm câu trả lời? (*)
-                                    </Typography>
-                                    <TextareaAutosize
-                                        className='layout-children-content-item-textarea'
-                                        value={formik.values.description}
-                                        onChange={formik.handleChange}
-                                        name='description'
-                                    ></TextareaAutosize>
-                                    {formik.errors.description && formik.touched.description && (<div className="form-error mt-2">{formik.errors.description}</div>)}
+                    <Grid className='layout-children-content-item'>
+                        <FormControl fullWidth>
+                            <Typography
+                                variant="h6"
+                                gutterBottom
+                            >
+                                Bạn đã thử cách gì để tìm kiếm câu trả lời? (*)
+                            </Typography>
+                            <TextareaAutosize
+                                className='layout-children-content-item-textarea'
+                                value={formik.values.description}
+                                onChange={formik.handleChange}
+                                name='description'
+                            ></TextareaAutosize>
+                            {formik.errors.description && formik.touched.description && (<div className="form-error mt-2">{formik.errors.description}</div>)}
 
-                                </FormControl>
-                            </Grid>
+                        </FormControl>
+                    </Grid>
 
-                            <Grid className='layout-children-content-item'>
-                                <FormControl fullWidth>
-                                    <Typography variant="h6" gutterBottom>File đính kèm ({'<'}5MB)</Typography>
-                                    <Button
-                                        variant="contained"
-                                        component="label"
-                                    >
-                                        <input
-                                            type="file"
-                                        />
-                                    </Button>
-                                </FormControl>
-                            </Grid>
+                    <Grid className='layout-children-content-item'>
+                        <FormControl fullWidth>
+                            <Typography variant="h6" gutterBottom>File đính kèm ({'<'}5MB)</Typography>
+                            <Button
+                                variant="contained"
+                                component="label"
+                            >
+                                <input
+                                    type="file"
+                                />
+                            </Button>
+                        </FormControl>
+                    </Grid>
 
-                            <Grid className='layout-children-content-item'>
+                    <Grid className='layout-children-content-item'>
+                        {
+                            isSelect && <>
                                 {
-                                  mentors.length > 0 && <Box sx={{marginBottom: '1rem'}}>
-                                    <Typography>Mentors :</Typography>
-                                </Box>
+                                    mentors.length > 0 && <Box sx={{ marginBottom: '1rem' }}>
+                                        <Typography>Mentors :</Typography>
+                                    </Box>
                                 }
                                 <Box display="flex" alignItems="center">
                                     {
@@ -202,15 +222,17 @@ function LayoutChildrenComponent() {
                                         })
                                     }
                                 </Box>
-                            </Grid>
-
-                            <Grid sx={{paddingBottom: '1rem'}} className='layout-children-content-item text-center'>
-                                <Button disabled={formik.isSubmitting} color='error' variant='outlined' onClick={formik.handleSubmit}>
-                                    Hỏi Mentor
-                                </Button>
-                            </Grid>
-                        </Grid>
+                            </>
+                        }
                     </Grid>
+
+                    <Grid sx={{ paddingBottom: '1rem' }} className='layout-children-content-item text-center'>
+                        <Button disabled={formik.isSubmitting} color='error' variant='outlined' onClick={formik.handleSubmit}>
+                            Hỏi Mentor
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Grid>
             }
         </>
     )

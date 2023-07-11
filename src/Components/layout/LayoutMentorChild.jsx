@@ -67,14 +67,6 @@ function LayoutMentorChildComponent() {
 
     useEffect(() => {
         list.current.scrollTo({ top: list.current.scrollHeight, behavior: 'smooth' });
-        socket.on(`get-create-notification/${id}`, (data) => {
-            setNotifications(prev => [...prev, data]);
-            const sound = new Howl({
-                src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
-              });
-            sound.play();
-        });
-
         socket.on('delete-notification', (id) => {
             setNotifications(prev => prev.filter(obj => obj._id !== id));
         });

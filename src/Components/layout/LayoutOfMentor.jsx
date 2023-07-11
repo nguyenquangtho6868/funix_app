@@ -58,26 +58,29 @@ function LayoutOfMentorComponent() {
 
     useEffect(() => {
         getUserDetail((rs) => {
-            if (rs.statusCode === 200) {
+            if (rs.statusCode === 200 && rs.data?.courses) {
                 setListCourse(rs.data.courses);
                 setListCourseChat(rs.data.courses);
             }
         }, userId, "");
 
-        socket.on(`get-create-notification-all`, (data) => {
-            const sound = new Howl({
-                src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
-            });
-            sound.play();
-            getUserDetail((rs) => {
-                if (rs.statusCode === 200) {
-                    setListCourseChat(rs.data.courses);
-                }
-            }, userId, "");
+        socket.on(`get-create-notification-all`, (mentors) => {
+            const checkMentor = mentors.some(item => item.user._id === userId);
+            if(checkMentor) {
+                const sound = new Howl({
+                    src: [require('../../assets/sounds/clock-alarm.mp3')] // Đường dẫn đến file âm thanh
+                });
+                sound.play();
+                getUserDetail((rs) => {
+                    if (rs.statusCode === 200) {
+                        setListCourseChat(rs.data.courses);
+                    }
+                }, userId, "");
+            }
+            
         });
 
         socket.on(`change-new-notification-success/${userId}`, (data) => {
-            console.log(data);
             setListCourseChat(data.courses);
         });
 
