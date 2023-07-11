@@ -32,17 +32,17 @@ let users = [];
 
 const addUser = async (userId,socketId) => {
     const getUserDetail = await UserModel.findOne({_id: userId});
-    !users.some((item) => item.user._id == userId) &&
-        users.push({ user: getUserDetail, socketId });
+    !users.some((item) => item.user?._id == userId) && users.push({ user: getUserDetail, socketId });
+    console.log(users);
+};
+
+const filterUser = async (data) => {
+    const newUsers = users.filter((obj) => obj.user.courses?.some(item => item._id === data.courseId) && obj.user.role !== 'STUDENT');
+    io.emit(`get-users-filter/${data.userId}`, newUsers);
 };
 
 const removeUser = (socketId) => {
     users = users.filter((user) => user.socketId !== socketId);
-};
-
-const filterUser = async (courseId,socketId) => {
-    const newUsers = users.filter((obj) => obj.user.courses?.some(item => item._id === courseId) && obj.user.role !== 'STUDENT');
-    io.to(`${socketId}`).emit("get-users-filter", newUsers);
 };
 
 mongoose.connect(process.env.MONGOOSE_URL)
@@ -50,8 +50,8 @@ mongoose.connect(process.env.MONGOOSE_URL)
         console.log('Connect to MonDu successfully!');
         io.on('connection', (socket) => {
 
-            socket.on('post-notification', (data) => {
-                Notification.addNotification(data, io);
+            socket.on('post-notification', (rs) => {
+                Notification.addNotification(rs, io);
             });
 
             socket.on('request-delete-notification', (id) => {
@@ -65,6 +65,7 @@ mongoose.connect(process.env.MONGOOSE_URL)
             socket.on('mentor-support-now', (data) => {
                 RoomChatController.addRoomChat(data, io);
             });
+            
 
             socket.on('send-message', (data) => {
                 RoomChatController.sendMessage(data, io);
@@ -80,9 +81,9 @@ mongoose.connect(process.env.MONGOOSE_URL)
                 io.emit("getUsers", users);
             });
 
-            // filter User
-            socket.on("filter-user", (data) => {
-                filterUser(data.courseId,data.socketId);
+            //filter user
+            socket.on("filter-mentor", (data) => {
+                filterUser(data);
             });
 
             //when disconnect

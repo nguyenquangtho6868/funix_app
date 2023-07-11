@@ -4,9 +4,9 @@ const MessageModel = require('../models/message');
 const UserModel = require('../models/user');
 
 class NotificationController {
-    async addNotification(data, io) {
+    async addNotification(rs, io) {
         const countdown = 60000;
-        const { question, user_id, description, course_id } = data;
+        const { question, user_id, description, course_id } = rs.data;
         const date = new Date(Date.now());
         const createdAtDay = date.toLocaleDateString([], { timeZone: "Asia/Saigon" })
         const createdAtTime = date.toLocaleTimeString([], {
@@ -38,7 +38,7 @@ class NotificationController {
             {$set: {"courses.$.new_notification": true}}
         );
         io.emit(`get-create-notification/${course_id}`, newNotification);
-        io.emit(`get-create-notification-all`, newNotification);
+        io.emit(`get-create-notification-all`, rs.mentors);
         io.emit(`create-room-chat/${user_id}`, { room_id: room._id, sender_id: user_id });
         setTimeout(async () => {
             const checkNotification = await Notification.findOne({ _id: newNotification._id });
