@@ -12,6 +12,7 @@ import { getRoomChat, endRoomChat, getRoomChatWithId, getRoomCheckUserId } from 
 import { API_URL } from '../../Constants/ApiConstant';
 import { uploadFile } from '../../uploadfile/uploadfile';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ModalZoomImage from '../../shares/ModalZoomImage';
 import Avatar from '@mui/material/Avatar';
 import io from 'socket.io-client';
 import { Howl } from 'howler';
@@ -29,7 +30,9 @@ function ChatRoomComponent() {
     const [isBottom, setIsBottom] = useState(false);
     const [isSend, setIsSend] = useState(false);
     const [isMentorIn, setIsMentorIn] = useState(false);
+    const [openModalZoom, setOpenModalZoom] = useState(false);
     const [valueMessage, setValueMessage] = useState('');
+    const [srcImage, setSrcImage] = useState('');
     const [conversations, setConversations] = useState([]);
     const [minutes, setMinutes] = useState(0);
     const [seconds, setSeconds] = useState(0);
@@ -234,6 +237,15 @@ function ChatRoomComponent() {
         if (file) handleSendFile(file);
     };
 
+    const openModalZoomImage = (src) => {
+        setOpenModalZoom(true);
+        setSrcImage(src);
+    };
+
+    const closeModalZoom = () => {
+        setOpenModalZoom(false);
+    };
+
     return (
         <Grid container className='layout-children-grid'>
             <Grid item xs={12} className='layout-children-right chat-room'>
@@ -297,7 +309,7 @@ function ChatRoomComponent() {
                                                                         {item.value}
                                                                     </Typography>
                                                                 </Box>
-                                                                <Box className={!item.is_file? 'display-none' : ''}>
+                                                                <Box className={!item.is_file? 'display-none' : ''} onClick={() => openModalZoomImage(item.value)}>
                                                                     <img style={{ width: '25rem', borderRadius: '1.5rem', cursor: 'pointer' }} src={item.value} alt="" />
                                                                 </Box>
                                                             </ListItem>
@@ -355,6 +367,7 @@ function ChatRoomComponent() {
                     </Grid>
                 </Grid>
             </Grid>
+            {openModalZoom && <ModalZoomImage srcImage={srcImage} open={openModalZoom} handleCloseModal={closeModalZoom} />}
         </Grid>
     )
 }
