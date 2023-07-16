@@ -107,11 +107,34 @@ body {
   .history-filter {
     margin-top: 2rem;
   }
+
+  .chat-room {
+    padding: 4rem 8rem;
+    background: #1c1616;
+  }
+
+  .chat-right-title {
+    border-top-right-radius: 1.8rem;
+    border-top-left-radius: 1.8rem;
+  }
+
+  .message-input {
+    border-bottom-right-radius: 1.8rem;
+    border-bottom-left-radius: 1.8rem;
+  }
+
+  .message-input-value {
+    height: 65%;
+  }
 }
 
 @media (max-width: 912px) {
   .layout-mentor-child-header {
     height: 6.5vh !important;
+  }
+
+  .chat-content::-webkit-scrollbar {
+    display: none;
   }
 }
 

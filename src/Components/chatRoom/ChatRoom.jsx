@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { List, ListItem } from '@mui/material';
+import { List, ListItem, Box } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import Button from '@mui/material/Button';
 import TelegramIcon from '@mui/icons-material/Telegram';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getRoomChat, endRoomChat, getRoomChatWithId, getRoomCheckUserId } from '../../Services/RoomChatService';
 import { API_URL } from '../../Constants/ApiConstant';
+import { uploadFile } from '../../uploadfile/uploadfile';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Avatar from '@mui/material/Avatar';
 import io from 'socket.io-client';
@@ -68,7 +69,16 @@ function ChatRoomComponent() {
         }, roomId);
     }
 
-    const handleSendMessage = (data) => {
+    const handleSendMessage = () => {
+        let data = {
+            sender: userId,
+            content: {
+                value: valueMessage,
+                is_file: false
+            },
+            room_id: roomId,
+            prev_message: conversations[conversations.length - 1]
+        }
         socket.emit('send-message', data);
         setValueMessage('');
         const sound = new Howl({
@@ -78,26 +88,14 @@ function ChatRoomComponent() {
     }
 
     const sendMessage = () => {
-        let data = {
-            sender: userId,
-            content: valueMessage,
-            room_id: roomId,
-            prev_message: conversations[conversations.length - 1]
-        }
         if (valueMessage !== '') {
-            handleSendMessage(data);
+            handleSendMessage(valueMessage);
         }
     }
 
     const sendMessageEnter = (e) => {
-        let data = {
-            sender: userId,
-            content: valueMessage,
-            room_id: roomId,
-            prev_message: conversations[conversations.length - 1]
-        }
         if (valueMessage !== '' && e.key === 'Enter') {
-            handleSendMessage(data);
+            handleSendMessage(valueMessage);
         }
     }
 
@@ -144,7 +142,7 @@ function ChatRoomComponent() {
 
     useEffect(() => {
         getRoomCheckUserId((res) => {
-            if(!res.data) {
+            if (!res.data) {
                 toast.error('Bạn không có quyền truy cập!');
                 navigate('/home');
             } else {
@@ -210,6 +208,32 @@ function ChatRoomComponent() {
         return time < 10 ? `0${time}` : time;
     };
 
+    const handleSendFile = (file) => {
+        console.log(file);
+        let data = {
+            sender: userId,
+            content: {
+                value: file,
+                is_file: true
+            },
+            room_id: roomId,
+            prev_message: conversations[conversations.length - 1]
+        }
+        socket.emit('send-message', data);
+    }
+
+    const handleDrop = async (event) => {
+        event.preventDefault();
+        const droppedFiles = Array.from(event.dataTransfer.files);
+        const file = await uploadFile(droppedFiles[0]);
+        if (file) handleSendFile(file);
+    };
+
+    const handleGetFile = async (event) => {
+        const file = await uploadFile(event.target.files[0]);
+        if (file) handleSendFile(file);
+    };
+
     return (
         <Grid container className='layout-children-grid'>
             <Grid item xs={12} className='layout-children-right chat-room'>
@@ -225,7 +249,11 @@ function ChatRoomComponent() {
                         END
                     </Button>
                 </Grid>
-                <Grid className='layout-children-right-content chat-right'>
+                <Grid
+                    className='layout-children-right-content chat-right'
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={handleDrop}
+                >
                     <List className='layout-children-list-mentor chat-content' ref={list} onScroll={handleScrollListChat}>
                         {
                             conversations.length > 0 && conversations.map((obj, key) => {
@@ -252,21 +280,26 @@ function ChatRoomComponent() {
                                                                 key={i}
                                                                 className={obj.sender._id === userId ? 'messages-item justify-end' : 'messages-item'}
                                                             >
-                                                                <Typography
-                                                                    className={obj.sender._id === userId ?
-                                                                        'messages-item-text middle-message messages-item-text-sender' :
-                                                                        'messages-item-text middle-message messages-item-text-receiver'
-                                                                    }
-                                                                    // className={key === 0 && obj.message.length > 2 ?
-                                                                    //     'messages-item-text first-message' :
-                                                                    //     `${key === obj.message.length - 1 && obj.message.length > 2 ?
-                                                                    //         'messages-item-text last-message' : 'messages-item-text middle-message'}`}
-                                                                    ml={1}
-                                                                    variant="body1"
-                                                                    gutterBottom
-                                                                >
-                                                                    {item}
-                                                                </Typography>
+                                                                <Box className={item.is_file? 'display-none' : ''}>
+                                                                    <Typography
+                                                                        className={obj.sender._id === userId ?
+                                                                            'messages-item-text middle-message messages-item-text-sender' :
+                                                                            'messages-item-text middle-message messages-item-text-receiver'
+                                                                        }
+                                                                        // className={key === 0 && obj.message.length > 2 ?
+                                                                        //     'messages-item-text first-message' :
+                                                                        //     `${key === obj.message.length - 1 && obj.message.length > 2 ?
+                                                                        //         'messages-item-text last-message' : 'messages-item-text middle-message'}`}
+                                                                        ml={1}
+                                                                        variant="body1"
+                                                                        gutterBottom
+                                                                    >
+                                                                        {item.value}
+                                                                    </Typography>
+                                                                </Box>
+                                                                <Box className={!item.is_file? 'display-none' : ''}>
+                                                                    <img style={{ width: '25rem', borderRadius: '1.5rem', cursor: 'pointer' }} src={item.value} alt="" />
+                                                                </Box>
                                                             </ListItem>
                                                         })
                                                     }
@@ -314,6 +347,7 @@ function ChatRoomComponent() {
                                 <input
                                     type="file"
                                     hidden
+                                    onChange={(e) => handleGetFile(e)}
                                 />
                                 <ImageIcon className='message-input-send-icon' />
                             </Button>
