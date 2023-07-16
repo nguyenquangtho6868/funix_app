@@ -6,7 +6,7 @@ const UserModel = require('../models/user');
 class NotificationController {
     async addNotification(rs, io) {
         const countdown = 60000;
-        const { question, user_id, description, course_id } = rs.data;
+        const { question, user_id, description, course_id, file } = rs.data;
         const date = new Date(Date.now());
         const createdAtDay = date.toLocaleDateString([], { timeZone: "Asia/Saigon" })
         const createdAtTime = date.toLocaleTimeString([], {
@@ -19,7 +19,10 @@ class NotificationController {
         });
         await MessageModel.create({
             sender: user_id,
-            content: [`Câu hỏi : ${question}`, `Mô tả : ${description}`],
+            content: [
+                { value: `Câu hỏi : ${question}`, is_file: false }, 
+                { value: `Mô tả : ${description}`, is_file: false }, 
+            ],
             room: room._id,
             createdAtDay,
             createdAtTime
