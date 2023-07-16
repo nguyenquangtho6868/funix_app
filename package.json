@@ -14,7 +14,6 @@
     "superagent": "^8.0.9"
   },
   "scripts": {
-    "start": "nodemon src/index.js",
-    "server": "nodemon src/index.js"
+    "start": "nodemon src/index.js"
   }
 }
