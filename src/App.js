@@ -7,6 +7,7 @@ import LayoutChildrenComponent from './Components/layout/LayoutChildren';
 import HistoryComponent from './Components/history/History';
 import ChatRoomComponent from './Components/chatRoom/ChatRoom';
 import LayoutMentorChildComponent from './Components/layout/LayoutMentorChild';
+import ProfileComponent from './Components/Profile/Profile';
 import DatePickerProvider from './Context/DatePickerProvider';
 import 'react-toastify/dist/ReactToastify.css';
 import '@fontsource/roboto/300.css';
@@ -25,6 +26,7 @@ function App() {
                 <Route path="group-chat-mentor/:id" element={<LayoutMentorChildComponent />} />
               </Route>
               <Route path="history" element={<HistoryComponent />} />
+              <Route path="profile" element={<ProfileComponent />} />
             </Route>
             <Route path="group-chat-mentor/:id" element={<LayoutMentorChildComponent />} />
             <Route path="chat-room/:roomId" element={<ChatRoomComponent />} />

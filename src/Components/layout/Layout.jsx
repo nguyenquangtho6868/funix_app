@@ -27,6 +27,10 @@ function LayoutComponent({ children }) {
         navigate('/home/history');
     }
 
+    const moveToProfile = () => {
+        navigate('/home/profile');
+    }
+
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
@@ -53,8 +57,8 @@ function LayoutComponent({ children }) {
                         </List>
                         <List className='layout-nav-list'>
                             <Tooltip title="Profile" placement='right-end'>
-                                <ListItem button className='layout-nav-list-item'>
-                                    <ListItemIcon className='text-center-flex'> <AccountCircleIcon fontSize="large" color="secondary" /></ListItemIcon>
+                                <ListItem button className='layout-nav-list-item' onClick={moveToProfile}>
+                                    <ListItemIcon className='text-center-flex' > <AccountCircleIcon fontSize="large" color="secondary" /></ListItemIcon>
                                 </ListItem>
                             </Tooltip>
 
@@ -83,7 +87,7 @@ function LayoutComponent({ children }) {
                     />
                     <SpeedDialAction
                         icon={<AccountCircleIcon fontSize="large" color="secondary" />}
-                        tooltipTitle={'Trang chủ'}
+                        tooltipTitle={'Lịch sử'}
                     />
                     <SpeedDialAction
                         icon={<HistoryIcon fontSize="large" color="secondary" />}

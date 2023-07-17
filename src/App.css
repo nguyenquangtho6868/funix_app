@@ -136,6 +136,10 @@ body {
   .chat-content::-webkit-scrollbar {
     display: none;
   }
+
+  .image-zoom {
+    min-width: 90vw !important;
+  }
 }
 
 @media (max-width: 820px) {
