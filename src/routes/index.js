@@ -19,9 +19,9 @@ function route(app) {
     AuthMiddleware.authLoginNoRole,
     userController.deleteUser
   );
-  app.delete(
+  app.put(
     "/edit-user",
-    AuthMiddleware.authLoginNoRole,
+
     userController.editUser
   );
   app.post(

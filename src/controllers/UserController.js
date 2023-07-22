@@ -99,13 +99,20 @@ class UserController {
   }
 
   async editUser(req, res) {
-    // try {
-    //     const listUser = await User.find({});
-    //     res.json({message: 'Get List User Successfully!', data: listUser, statusCode: 200});
-    // }
-    // catch (e) {
-    //     res.status(422).json(e)
-    // }
+    try {
+      const { id, username, email, role, courses } = req.body;
+      const newData = {
+        username: username,
+
+        email: email,
+        role: role,
+        courses: courses,
+      };
+      await User.findByIdAndUpdate({ _id: id }, newData, { new: true });
+      res.json({ message: "Edit User Successfully!", statusCode: 200 });
+    } catch (e) {
+      res.status(422).json(e);
+    }
   }
 
   async getUserDetail(req, res) {
