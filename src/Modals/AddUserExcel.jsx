@@ -156,33 +156,32 @@ export default function AddUserExcel({ handleClose, handleGet }) {
               required
             ></input>
 
-            {!submit && !subCon && (
-              <button
-                onClick={handleSubmit}
-                className="btn btn-success"
-                style={{ marginTop: 5 + "px" }}
-              >
-                Submit
-              </button>
-            )}
-            {submit && (
-              <button
-                onClick={handleConvert}
-                className="btn btn-success"
-                style={{ marginTop: 5 + "px" }}
-              >
-                Convert
-              </button>
-            )}
-            {!submit && subCon && (
-              <button
-                onClick={handleRequest}
-                className="btn btn-success"
-                style={{ marginTop: 5 + "px" }}
-              >
-                Request
-              </button>
-            )}
+            <button
+              disabled={submit || subCon}
+              onClick={handleSubmit}
+              className="btn btn-success"
+              style={{ marginTop: 5 + "px" }}
+            >
+              Submit
+            </button>
+
+            <button
+              disabled={!submit}
+              onClick={handleConvert}
+              className="btn btn-success"
+              style={{ marginTop: 5 + "px" }}
+            >
+              Convert
+            </button>
+
+            <button
+              disabled={submit || !subCon}
+              onClick={handleRequest}
+              className="btn btn-success"
+              style={{ marginTop: 5 + "px" }}
+            >
+              Request
+            </button>
           </div>
         </div>
       </div>
