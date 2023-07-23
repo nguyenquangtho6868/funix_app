@@ -14,6 +14,11 @@ function route(app) {
     userController.getListUser
   );
   app.post("/add-user", AuthMiddleware.authLoginNoRole, userController.addUser);
+  app.post(
+    "/add-listuser",
+    AuthMiddleware.authLoginNoRole,
+    userController.addListUser
+  );
   app.delete(
     "/delete-user",
     AuthMiddleware.authLoginNoRole,
